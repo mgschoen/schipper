@@ -1,0 +1,12 @@
+@import 'leaflet/dist/leaflet.css';
+
+main {
+    text-align: center;
+
+    #canvas {
+        box-shadow: 0 0 20px -15px #222222;
+        height: 600px;
+        margin: 20px auto;
+        max-width: 800px;
+    }
+}
