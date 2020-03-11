@@ -1,3 +1,3 @@
 import Schipper from './modules/schipper';
 
-window.Schipper = new Schipper('canvas', [53.5760286,10.0012145]);
+window.Schipper = new Schipper('canvas', [10.01303, 53.57882]);

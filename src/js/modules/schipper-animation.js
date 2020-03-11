@@ -12,16 +12,16 @@ function SchipperAnimation (target) {
         let nextPosition = [...currentPosition];
         
         if (that.directions.includes('left')) {
-            nextPosition[1] -= that.stepSize;
+            nextPosition[0] -= that.stepSize;
         }
         if (that.directions.includes('up')) {
-            nextPosition[0] += that.stepSize;
-        }
-        if (that.directions.includes('right')) {
             nextPosition[1] += that.stepSize;
         }
+        if (that.directions.includes('right')) {
+            nextPosition[0] += that.stepSize;
+        }
         if (that.directions.includes('down')) {
-            nextPosition[0] -= that.stepSize;
+            nextPosition[1] -= that.stepSize;
         }
         that.target.moveTo(nextPosition[0], nextPosition[1]);
         if (that.running) {

@@ -1,41 +1,49 @@
-import Leaflet from 'leaflet';
-// Keep the VectorGrid import even though it looks as if it was not used.
-// It's attaching the VectorGrid plugin to the global Leaflet instance.
-import LeafletVectorgrid from 'leaflet.vectorgrid';
-
-import vectorStyles from './vector-styles';
-
-const tileURLPattern = 'https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=g96wJs8JvSyliKdi1Q1v';
-const openMapTilesURLPattern = 'https://api.maptiler.com/tiles/v3/{z}/{x}/{y}.pbf?key=g96wJs8JvSyliKdi1Q1v';
+const STYLE_SPECIFICATION_URL = 'https://api.maptiler.com/maps/2bc5df47-f6a5-4678-a93c-790959900538/style.json?key=g96wJs8JvSyliKdi1Q1v';
 
 function SchipperView (root, position) {
     this.center = position;
-    this.map = Leaflet.map(root, {
+    this.map = new mapboxgl.Map({
         attributionControl: false,
-        boxZoom: false,
+        container: root,
+        interactive: false,
+        style: STYLE_SPECIFICATION_URL,
         center: this.center,
-        doubleClickZoom: false,
-        dragging: false,
-        keyboard: false,
-        scrollWheelZoom: 'center',
-        zoom: 19,
-        zoomControl: false
+        zoom: 17.5
     });
-    this.marker = Leaflet.circle(this.center, {
-        color: 'red',
-        fillColor: '#f03',
-        fillOpacity: 0.5,
-        radius: 5
-    }).addTo(this.map);
+    this.marker = null;
 
-    var baseLayer = Leaflet.tileLayer(tileURLPattern).addTo(this.map);
-    var openMapTilesLayer = new Leaflet.VectorGrid.Protobuf(openMapTilesURLPattern, {
-        vectorTileLayerStyles: vectorStyles
-    }).addTo(this.map);
+    var getPointSource = function (coordinates) {
+        return {
+            type: 'geojson',
+            data: {
+                type: 'Point',
+                coordinates
+            }
+        };
+    };
 
-    this.moveTo = function (x, y) {
-        this.map.setView([x,y]);
-        this.marker.setLatLng([x,y]);
+    this.map.on('load', function() {
+        // Add a source and layer displaying a point which will be animated in a circle.
+        this.map.addSource('marker', getPointSource(this.center));
+        this.marker = this.map.getSource('marker');
+            
+        this.map.addLayer({
+            'id': 'point',
+            'source': 'marker',
+            'type': 'circle',
+            'paint': {
+                'circle-radius': 10,
+                'circle-color': '#007cbf'
+            }
+        });
+    }.bind(this));
+
+    this.moveTo = function (x, y, zoom) {
+        this.map.jumpTo({
+            center: [x, y],
+            zoom: zoom ? zoom : this.map.getZoom()
+        });
+        this.marker.setData(getPointSource([x,y]).data);
         this.center = [x,y];
     }
 }
