@@ -46,6 +46,20 @@ function SchipperView (root, position) {
         this.marker.setData(getPointSource([x,y]).data);
         this.center = [x,y];
     }
+
+    this.onWater = function (lat, lon) {
+        let viewportWidth = this.map._container.offsetWidth;
+        let viewportHeight = this.map._container.offsetHeight;
+        let viewportPosition = this.map.project([lat,lon]);
+        if (viewportPosition.x < 0 || viewportPosition.x > viewportWidth ||
+            viewportPosition.y < 0 || viewportPosition.y > viewportHeight) {
+                throw new RangeError('Cannot check onWater status if location is out of viewport');
+        }
+        let waterPolygons = this.map.queryRenderedFeatures(viewportPosition, {
+            layers: ['water_polygon']
+        });
+        return waterPolygons.length > 0;
+    }
 }
 
 export default SchipperView;

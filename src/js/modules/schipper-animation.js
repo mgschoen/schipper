@@ -23,7 +23,9 @@ function SchipperAnimation (target) {
         if (that.directions.includes('down')) {
             nextPosition[1] -= that.stepSize;
         }
-        that.target.moveTo(nextPosition[0], nextPosition[1]);
+        if (that.target.onWater(...nextPosition)) {
+            that.target.moveTo(nextPosition[0], nextPosition[1]);
+        }
         if (that.running) {
             window.requestAnimationFrame(loopFunction);
         }
