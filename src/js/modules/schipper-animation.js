@@ -26,6 +26,9 @@ function SchipperAnimation (target) {
         if (that.target.onWater(...nextPosition)) {
             that.target.moveTo(nextPosition[0], nextPosition[1]);
         }
+        if (that.target.justWater()) {
+            that.target.zoomOut();
+        }
         if (that.running) {
             window.requestAnimationFrame(loopFunction);
         }

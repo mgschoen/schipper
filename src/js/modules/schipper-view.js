@@ -60,6 +60,20 @@ function SchipperView (root, position) {
         });
         return waterPolygons.length > 0;
     }
+
+    this.justWater = function () {
+        let renderedFeatures = this.map.queryRenderedFeatures();
+        let nonWaterFeatures = renderedFeatures.filter(feature => {
+            return feature.source !== 'marker' && feature.sourceLayer !== 'water';
+        });
+        return nonWaterFeatures.length ? false : true;
+    }
+
+    this.zoomOut = function () {
+        this.map.easeTo({
+            zoom: this.map.getZoom() - 1
+        });
+    }
 }
 
 export default SchipperView;
