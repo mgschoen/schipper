@@ -1,3 +1,6 @@
+import Constants from '../constants';
+
+const { animation } = Constants;
 const STYLE_SPECIFICATION_URL = 'https://api.maptiler.com/maps/2bc5df47-f6a5-4678-a93c-790959900538/style.json?key=g96wJs8JvSyliKdi1Q1v';
 
 function SchipperView (root, position) {
@@ -8,7 +11,7 @@ function SchipperView (root, position) {
         interactive: false,
         style: STYLE_SPECIFICATION_URL,
         center: this.center,
-        zoom: 17.5
+        zoom: animation.initialZoom
     });
     this.marker = null;
 
@@ -61,17 +64,25 @@ function SchipperView (root, position) {
         return waterPolygons.length > 0;
     }
 
-    this.justWater = function () {
+    this.numLandFeatures = function () {
         let renderedFeatures = this.map.queryRenderedFeatures();
         let nonWaterFeatures = renderedFeatures.filter(feature => {
             return feature.source !== 'marker' && feature.sourceLayer !== 'water';
         });
-        return nonWaterFeatures.length ? false : true;
+        return nonWaterFeatures.length;
     }
 
     this.zoomOut = function () {
-        this.map.easeTo({
-            zoom: this.map.getZoom() - 1
+        this.map.zoomTo(this.map.getZoom() - animation.zoomStep, {
+            animated: true,
+            duration: animation.zoomDuration
+        });
+    }
+
+    this.zoomIn = function () {
+        this.map.zoomTo(this.map.getZoom() + animation.zoomStep, {
+            animated: true,
+            duration: animation.zoomDuration
         });
     }
 }
