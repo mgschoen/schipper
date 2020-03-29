@@ -1,0 +1,71 @@
+/* Frame style inspired by https://codepen.io/chris22smith/pen/PbBwjp */
+
+$frame-width: 18px;
+$frame-ornament-inner-distance: 7px;
+$frame-ornament-width: 3px;
+
+$frame-color: #99520c;
+$frame-color-light: #a35d12;
+$frame-color-shade: #80480c;
+$frame-color-content: rgba(237, 231, 231, .9);
+$frame-color-shadow: rgba(0,0,0,.25);
+
+$frame-border-radius: 2px;
+
+@mixin frame-ornament($distance, $inset: false) {
+    border-radius: $frame-border-radius;
+    bottom: -$distance;
+    @if $inset { box-shadow: 0 2px 5px 0 $frame-color-shadow inset; } 
+    @else { box-shadow: 0 2px 5px 0 $frame-color-shadow; }
+    content: "";
+    left: -$distance;
+    position: absolute;
+    right: -$distance;
+    top: -$distance;
+}
+
+.ui {
+    background-color: $frame-color-content;
+    border: solid $frame-width $frame-color;
+    border-bottom-color: $frame-color-light;
+    border-radius: $frame-border-radius;
+    border-top-color: $frame-color-shade;
+    box-shadow: 
+        0 0 5px 0 $frame-color-shadow inset,
+        0 5px 10px 5px $frame-color-shadow;
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 20px;
+    position: fixed;
+    text-align: center;
+
+    &:before {
+        @include frame-ornament($frame-ornament-inner-distance, true);
+    }
+
+    &:after {
+        @include frame-ornament(
+            $frame-ornament-inner-distance + $frame-ornament-width
+        );
+    }
+
+    &--top-left {
+        left: 20px;
+        top: 20px;
+    }
+
+    &--top-right {
+        right: 20px;
+        top: 20px;
+    }
+
+    &--bottom-left {
+        bottom: 20px;
+        left: 20px;
+    }
+
+    &--bottom-right {
+        bottom: 20px;
+        right: 20px;
+    }
+}
