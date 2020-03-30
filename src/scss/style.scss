@@ -5,6 +5,8 @@
 @import './fonts';
 @import './ui';
 
+$pc-radius: 10px;
+
 body {
     font-family: 'Open Sans', sans-serif;
     margin: 0;
@@ -20,4 +22,15 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Cabin Sketch', cursive;
     font-weight: 400;
     margin: 0 auto 10px;
+}
+
+.pc {
+    background: #007cbf;
+    border-radius: $pc-radius;
+    height: $pc-radius * 2;
+    left: 50%;
+    margin: (-$pc-radius) 0 0 (-$pc-radius);
+    position: fixed;
+    top: 50%;
+    width: $pc-radius * 2;
 }

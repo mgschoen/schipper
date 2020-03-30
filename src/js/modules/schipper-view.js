@@ -4,6 +4,9 @@ const { animation } = Constants;
 const STYLE_SPECIFICATION_URL = 'https://api.maptiler.com/maps/2bc5df47-f6a5-4678-a93c-790959900538/style.json?key=g96wJs8JvSyliKdi1Q1v';
 
 function SchipperView (root, position) {
+    this.root = typeof root === 'string' 
+        ? document.querySelector('#' + root)
+        : root;
     this.center = position;
     this.map = new mapboxgl.Map({
         attributionControl: false,
@@ -15,30 +18,11 @@ function SchipperView (root, position) {
     });
     this.marker = null;
 
-    var getPointSource = function (coordinates) {
-        return {
-            type: 'geojson',
-            data: {
-                type: 'Point',
-                coordinates
-            }
-        };
-    };
-
     this.map.on('load', function() {
-        // Add a source and layer displaying a point which will be animated in a circle.
-        this.map.addSource('marker', getPointSource(this.center));
-        this.marker = this.map.getSource('marker');
-            
-        this.map.addLayer({
-            'id': 'point',
-            'source': 'marker',
-            'type': 'circle',
-            'paint': {
-                'circle-radius': 10,
-                'circle-color': '#007cbf'
-            }
-        });
+        var marker = document.createElement('figure');
+        marker.className = 'pc';
+        this.root.insertAdjacentElement('afterend', marker);
+        this.marker = marker;
     }.bind(this));
 
     this.moveTo = function (x, y, zoom) {
@@ -46,7 +30,6 @@ function SchipperView (root, position) {
             center: [x, y],
             zoom: zoom ? zoom : this.map.getZoom()
         });
-        this.marker.setData(getPointSource([x,y]).data);
         this.center = [x,y];
     }
 
