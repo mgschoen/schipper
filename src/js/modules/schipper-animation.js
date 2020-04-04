@@ -14,34 +14,32 @@ function SchipperAnimation (target) {
     function loopFunction () {
 
         let currentPosition = that.target.center;
-        let nextPosition = [...currentPosition];
+        let movement = [0, 0];
         let numVisibleLandFeatures = that.target.numLandFeatures();
         
         if (that.directions.includes('left')) {
-            nextPosition[0] -= that.stepSize;
+            movement[0] -= that.stepSize;
         }
         if (that.directions.includes('up')) {
-            nextPosition[1] += that.stepSize;
+            movement[1] += that.stepSize;
         }
         if (that.directions.includes('right')) {
-            nextPosition[0] += that.stepSize;
+            movement[0] += that.stepSize;
         }
         if (that.directions.includes('down')) {
-            nextPosition[1] -= that.stepSize;
+            movement[1] -= that.stepSize;
         }
-        if (that.target.onWater(...nextPosition)) {
-            that.target.moveTo(nextPosition[0], nextPosition[1]);
+        if (that.target.onWater(currentPosition[0] + movement[0], currentPosition[1] + movement[1])) {
+            that.target.moveBy(movement[0], movement[1]);
         }
         let performingZoom = false;
         if (numVisibleLandFeatures < animation.zoomFeatureThresholdMin 
             && !that.isZooming) {
-                console.log('(anim) zooming out', that.target);
                 that.target.zoomOut();
                 performingZoom = true;
         }
         if (numVisibleLandFeatures > animation.zoomFeatureThresholdMax
             && !that.isZooming) {
-                console.log('(anim) zooming in', that.target);
                 that.target.zoomIn();
                 performingZoom = true;
         }

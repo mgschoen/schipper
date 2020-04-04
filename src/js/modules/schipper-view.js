@@ -1,4 +1,5 @@
 import Constants from '../constants';
+import AnimationController from './animation/animation-controller';
 
 const { animation } = Constants;
 const STYLE_SPECIFICATION_URL = 'https://api.maptiler.com/maps/2bc5df47-f6a5-4678-a93c-790959900538/style.json?key=g96wJs8JvSyliKdi1Q1v';
@@ -21,6 +22,7 @@ function SchipperView (root, position) {
     });
     this.marker = null;
     this.scalingFactor = animation.initialMarkerSize / this.map.transform.scale;
+    this.animationController = new AnimationController(this.map);
 
     this.map.on('load', function() {
         var marker = document.createElement('figure');
@@ -29,12 +31,10 @@ function SchipperView (root, position) {
         this.marker = marker;
     }.bind(this));
 
-    this.moveTo = function (x, y, zoom) {
-        this.map.jumpTo({
-            center: [x, y],
-            zoom: zoom ? zoom : this.map.getZoom()
-        });
-        this.center = [x,y];
+    this.moveBy = function (x, y) {
+        this.animationController.moveBy(x, y);
+        this.center[0] += x;
+        this.center[1] += y;
     }
 
     this.onWater = function (lat, lon) {
@@ -73,12 +73,12 @@ function SchipperView (root, position) {
     }
 
     this.zoomOut = function () {
-        this.map.setZoom(this.map.getZoom() - animation.zoomStep);
+        this.animationController.zoomBy(-animation.zoomStep, animation.zoomDuration);
         this.resizeMarker();
     }
 
     this.zoomIn = function () {
-        this.map.setZoom(this.map.getZoom() + animation.zoomStep);
+        this.animationController.zoomBy(animation.zoomStep, animation.zoomDuration);
         this.resizeMarker();
     }
 }
