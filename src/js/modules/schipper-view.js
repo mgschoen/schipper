@@ -2,6 +2,12 @@ import Constants from '../constants';
 
 const { animation } = Constants;
 const STYLE_SPECIFICATION_URL = 'https://api.maptiler.com/maps/2bc5df47-f6a5-4678-a93c-790959900538/style.json?key=g96wJs8JvSyliKdi1Q1v';
+const MAP_OPTIONS = {
+    attributionControl: false,
+    interactive: false,
+    style: STYLE_SPECIFICATION_URL,
+    zoom: animation.initialZoom
+};
 
 function SchipperView (root, position) {
     this.root = typeof root === 'string' 
@@ -9,14 +15,12 @@ function SchipperView (root, position) {
         : root;
     this.center = position;
     this.map = new mapboxgl.Map({
-        attributionControl: false,
         container: root,
-        interactive: false,
-        style: STYLE_SPECIFICATION_URL,
         center: this.center,
-        zoom: animation.initialZoom
+        ...MAP_OPTIONS
     });
     this.marker = null;
+    this.scalingFactor = animation.initialMarkerSize / this.map.transform.scale;
 
     this.map.on('load', function() {
         var marker = document.createElement('figure');
@@ -55,18 +59,27 @@ function SchipperView (root, position) {
         return nonWaterFeatures.length;
     }
 
+    this.resizeMarker = function () {
+        if (!this.marker) {
+            console.warn('Failed to resize marker: Not yet initialized');
+            return;
+        }
+        let radius = this.map.transform.scale * this.scalingFactor;
+        this.marker.style.borderRadius = radius + 'px';
+        this.marker.style.height = (radius * 2) + 'px';
+        this.marker.style.marginLeft = -radius + 'px';
+        this.marker.style.marginTop = -radius + 'px';
+        this.marker.style.width = (radius * 2) + 'px';
+    }
+
     this.zoomOut = function () {
-        this.map.zoomTo(this.map.getZoom() - animation.zoomStep, {
-            animated: true,
-            duration: animation.zoomDuration
-        });
+        this.map.setZoom(this.map.getZoom() - animation.zoomStep);
+        this.resizeMarker();
     }
 
     this.zoomIn = function () {
-        this.map.zoomTo(this.map.getZoom() + animation.zoomStep, {
-            animated: true,
-            duration: animation.zoomDuration
-        });
+        this.map.setZoom(this.map.getZoom() + animation.zoomStep);
+        this.resizeMarker();
     }
 }
 

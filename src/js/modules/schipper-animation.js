@@ -34,12 +34,14 @@ function SchipperAnimation (target) {
         }
         let performingZoom = false;
         if (numVisibleLandFeatures < animation.zoomFeatureThresholdMin 
-            && !that.target.map.isZooming()) {
+            && !that.isZooming) {
+                console.log('(anim) zooming out', that.target);
                 that.target.zoomOut();
                 performingZoom = true;
         }
         if (numVisibleLandFeatures > animation.zoomFeatureThresholdMax
-            && !that.target.map.isZooming()) {
+            && !that.isZooming) {
+                console.log('(anim) zooming in', that.target);
                 that.target.zoomIn();
                 performingZoom = true;
         }
