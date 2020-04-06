@@ -1,7 +1,3 @@
-import Constants from '../../constants';
-
-const { animation } = Constants;
-
 function MovementAnimation (target) {
     this.target = target;
     this.running = false;
