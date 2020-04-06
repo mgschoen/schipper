@@ -1,19 +1,21 @@
 import SchipperView from './schipper-view';
 import SchipperInputObserver from './schipper-input-observer';
-import SchipperAnimation from './schipper-animation';
+import MovementAnimation from './animation/movement-animation';
+import ZoomAnimation from './animation/zoom-animation';
 
 function Schipper (root, position) {
     this.view = new SchipperView(root, position);
-    this.animation = new SchipperAnimation(this.view);
+    this.movementAnimation = new MovementAnimation(this.view);
+    this.zoomAnimation = new ZoomAnimation(this.view);
     this.input = new SchipperInputObserver(data => {
         let activeDirections = Object.keys(data).filter(key => data[key]);
         if (activeDirections.length) {
-            this.animation.setDirections(activeDirections);
-            if (!this.animation.running) {
-                this.animation.start();
+            this.movementAnimation.setDirections(activeDirections);
+            if (!this.movementAnimation.running) {
+                this.movementAnimation.start();
             }
         } else {
-            this.animation.stop();
+            this.movementAnimation.stop();
         }
     });
 }

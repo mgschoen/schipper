@@ -1,13 +1,12 @@
-import Constants from '../constants';
+import Constants from '../../constants';
 
 const { animation } = Constants;
 
-function SchipperAnimation (target) {
+function MovementAnimation (target) {
     this.target = target;
     this.running = false;
     this.directions = [];
     this.stepSize = 0.00001;
-    this.isZooming = false;
 
     let that = this;
 
@@ -15,7 +14,6 @@ function SchipperAnimation (target) {
 
         let currentPosition = that.target.center;
         let movement = [0, 0];
-        let numVisibleLandFeatures = that.target.numLandFeatures();
         
         if (that.directions.includes('left')) {
             movement[0] -= that.stepSize;
@@ -31,21 +29,6 @@ function SchipperAnimation (target) {
         }
         if (that.target.onWater(currentPosition[0] + movement[0], currentPosition[1] + movement[1])) {
             that.target.moveBy(movement[0], movement[1]);
-        }
-        let performingZoom = false;
-        if (numVisibleLandFeatures < animation.zoomFeatureThresholdMin 
-            && !that.isZooming) {
-                that.target.zoomOut();
-                performingZoom = true;
-        }
-        if (numVisibleLandFeatures > animation.zoomFeatureThresholdMax
-            && !that.isZooming) {
-                that.target.zoomIn();
-                performingZoom = true;
-        }
-        if (performingZoom) {
-            that.isZooming = true;
-            setTimeout(_ => that.isZooming = false, animation.zoomDuration);
         }
         if (that.running) {
             window.requestAnimationFrame(loopFunction);
@@ -66,4 +49,4 @@ function SchipperAnimation (target) {
     }
 }
 
-export default SchipperAnimation;
+export default MovementAnimation;
