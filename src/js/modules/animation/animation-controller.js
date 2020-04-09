@@ -45,6 +45,9 @@ function AnimationController (mapboxMap, markerElement) {
         let now = new Date().getTime();
         if (this._moveTargetX || this._moveTargetY) {
             let calcPosition = this._calculateIntermediatePosition(now);
+            if (Number.isNaN(calcPosition.x) || Number.isNaN(calcPosition.y)) {
+                return;
+            }
             this._map.setCenter({lng: calcPosition.x, lat: calcPosition.y});
             this._x = calcPosition.x;
             this._y = calcPosition.y;
