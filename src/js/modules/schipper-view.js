@@ -21,17 +21,22 @@ function SchipperView (root, position) {
         ...MAP_OPTIONS
     });
     this.marker = null;
-    this.scalingFactor = animation.initialMarkerSize / this.map.transform.scale;
-    this.animationController = new AnimationController(this.map);
+    this.animationController = null;
+    this.loaded = false;
 
     this.map.on('load', function() {
         var marker = document.createElement('figure');
         marker.className = 'pc';
         this.root.insertAdjacentElement('afterend', marker);
         this.marker = marker;
+        this.animationController = new AnimationController(this.map, this.marker);
+        this.loaded = true;
     }.bind(this));
 
     this.moveBy = function (x, y) {
+        if (!this.loaded) {
+            return;
+        }
         this.animationController.moveBy(x, y);
         this.center[0] += x;
         this.center[1] += y;
@@ -59,27 +64,18 @@ function SchipperView (root, position) {
         return nonWaterFeatures.length;
     }
 
-    this.resizeMarker = function () {
-        if (!this.marker) {
-            console.warn('Failed to resize marker: Not yet initialized');
+    this.zoomOut = function () {
+        if (!this.loaded) {
             return;
         }
-        let radius = this.map.transform.scale * this.scalingFactor;
-        this.marker.style.borderRadius = radius + 'px';
-        this.marker.style.height = (radius * 2) + 'px';
-        this.marker.style.marginLeft = -radius + 'px';
-        this.marker.style.marginTop = -radius + 'px';
-        this.marker.style.width = (radius * 2) + 'px';
-    }
-
-    this.zoomOut = function () {
         this.animationController.zoomBy(-animation.zoomStep, animation.zoomDuration);
-        this.resizeMarker();
     }
 
     this.zoomIn = function () {
+        if (!this.loaded) {
+            return;
+        }
         this.animationController.zoomBy(animation.zoomStep, animation.zoomDuration);
-        this.resizeMarker();
     }
 }
 

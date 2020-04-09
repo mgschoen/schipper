@@ -1,12 +1,19 @@
-function AnimationController (mapboxMap) {
+import Constants from '../../constants';
+
+const { animation } = Constants;
+
+function AnimationController (mapboxMap, markerElement) {
 
     this.animating = false;
     this.moving = false;
     this.zooming = false;
     this.rotating = false;
 
-    // where we are
     this._map = mapboxMap;
+    this._marker = markerElement;
+    this._markerScalingFactor = 1 / this._map.transform.scale;
+
+    // where we are
     this._x = this._map.getCenter().lng;
     this._y = this._map.getCenter().lat;
     this._zoom = this._map.getZoom();
@@ -49,6 +56,7 @@ function AnimationController (mapboxMap) {
         if (this._zoomTarget) {
             let calcZoom = this._calculateIntermediateZoom(now);
             this._map.setZoom(calcZoom.zoom);
+            this._resizeMarker();
             this._zoom = calcZoom.zoom;
             if (calcZoom.percentagePassed >= 1) {
                 this._resetZoom();
@@ -134,6 +142,11 @@ function AnimationController (mapboxMap) {
         this._rotationTarget = null;
         this._rotationDuration = null;
         this._doneRotatingAt = null;
+    }
+
+    this._resizeMarker = function () {
+        let scale = this._map.transform.scale * this._markerScalingFactor;
+        this._marker.style.transform = `scale(${scale})`;
     }
 
     this.moveBy = function (x, y, duration) {
