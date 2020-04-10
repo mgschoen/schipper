@@ -1,5 +1,5 @@
-import Constants from '../constants';
-import AnimationController from './animation/animation-controller';
+import Constants from '../../constants';
+import AnimationPlayer from './_animation-player';
 
 const { animation } = Constants;
 const STYLE_SPECIFICATION_URL = 'https://api.maptiler.com/maps/2bc5df47-f6a5-4678-a93c-790959900538/style.json?key=g96wJs8JvSyliKdi1Q1v';
@@ -21,7 +21,7 @@ function SchipperView (root, position) {
         ...MAP_OPTIONS
     });
     this.marker = null;
-    this.animationController = null;
+    this.animationPlayer = null;
     this.loaded = false;
 
     this.map.on('load', function() {
@@ -29,7 +29,7 @@ function SchipperView (root, position) {
         marker.className = 'pc';
         this.root.insertAdjacentElement('afterend', marker);
         this.marker = marker;
-        this.animationController = new AnimationController(this.map, this.marker);
+        this.animationPlayer = new AnimationPlayer(this.map, this.marker);
         this.loaded = true;
     }.bind(this));
 
@@ -37,7 +37,7 @@ function SchipperView (root, position) {
         if (!this.loaded) {
             return;
         }
-        this.animationController.moveBy(x, y);
+        this.animationPlayer.moveBy(x, y);
         this.center[0] += x;
         this.center[1] += y;
     }
@@ -68,14 +68,14 @@ function SchipperView (root, position) {
         if (!this.loaded) {
             return;
         }
-        this.animationController.zoomBy(-animation.zoomStep, animation.zoomDuration);
+        this.animationPlayer.zoomBy(-animation.zoomStep, animation.zoomDuration);
     }
 
     this.zoomIn = function () {
         if (!this.loaded) {
             return;
         }
-        this.animationController.zoomBy(animation.zoomStep, animation.zoomDuration);
+        this.animationPlayer.zoomBy(animation.zoomStep, animation.zoomDuration);
     }
 }
 

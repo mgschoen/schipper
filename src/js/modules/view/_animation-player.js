@@ -2,7 +2,7 @@ import Constants from '../../constants';
 
 const { animation } = Constants;
 
-function AnimationController (mapboxMap, markerElement) {
+function AnimationPlayer (mapboxMap, markerElement) {
 
     this.animating = false;
     this.moving = false;
@@ -204,4 +204,4 @@ function AnimationController (mapboxMap, markerElement) {
 
 }
 
-export default AnimationController;
+export default AnimationPlayer;

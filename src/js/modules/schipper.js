@@ -1,4 +1,4 @@
-import SchipperView from './schipper-view';
+import SchipperView from './view/schipper-view';
 import SchipperInputObserver from './schipper-input-observer';
 import MovementAnimation from './animation/movement-animation';
 import ZoomAnimation from './animation/zoom-animation';
