@@ -1,6 +1,7 @@
-function SchipperInputObserver (eventCallback) {
+import SchipperEvents from './schipper-events';
 
-    this.eventCallback = eventCallback;
+function SchipperInputObserver () {
+
     this.directionStates = {
         left: false,
         up: false,
@@ -32,7 +33,7 @@ function SchipperInputObserver (eventCallback) {
              }
         }
         if (directionStatesChanged) {
-            this.eventCallback(this.directionStates);
+            SchipperEvents.publish('KEYS_CHANGED', this.directionStates);
         }
     }
 

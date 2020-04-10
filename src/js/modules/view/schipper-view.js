@@ -1,5 +1,7 @@
 import Constants from '../../constants';
 import AnimationPlayer from './_animation-player';
+import MovementAnimation from '../animation/movement-animation';
+import ZoomAnimation from '../animation/zoom-animation';
 
 const { animation } = Constants;
 const STYLE_SPECIFICATION_URL = 'https://api.maptiler.com/maps/2bc5df47-f6a5-4678-a93c-790959900538/style.json?key=g96wJs8JvSyliKdi1Q1v';
@@ -21,7 +23,11 @@ function SchipperView (root, position) {
         ...MAP_OPTIONS
     });
     this.marker = null;
+
     this.animationPlayer = null;
+    this.movementAnimation = new MovementAnimation(this);
+    this.zoomAnimation = new ZoomAnimation(this);
+    
     this.loaded = false;
 
     this.map.on('load', function() {

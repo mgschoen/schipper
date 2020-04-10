@@ -1,10 +1,26 @@
+import SchipperEvents from '../schipper-events';
+
 function MovementAnimation (target) {
     this.target = target;
     this.running = false;
     this.directions = [];
     this.stepSize = 0.00001;
 
+    SchipperEvents.subscribe('KEYS_CHANGED', onKeysChanged);
+
     let that = this;
+
+    function onKeysChanged (data) {
+        let activeDirections = Object.keys(data).filter(key => data[key]);
+        if (activeDirections.length) {
+            that.setDirections(activeDirections);
+            if (!that.running) {
+                that.start();
+            }
+        } else {
+            that.stop();
+        }
+    }
 
     function loopFunction () {
 
