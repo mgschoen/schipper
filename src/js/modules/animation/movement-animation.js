@@ -1,19 +1,32 @@
 import SchipperEvents from '../schipper-events';
 
+function toRad (degree) {
+    return degree * (Math.PI / 180);
+}
+
+function rotateVector (x, y, degree) {
+    let rotation = -toRad(degree);
+    let rotatedX = (x * Math.cos(rotation)) - (y * Math.sin(rotation));
+    let rotatedY = (x * Math.sin(rotation)) + (y * Math.cos(rotation));
+    return [rotatedX, rotatedY];
+}
+
 function MovementAnimation (target) {
     this.target = target;
     this.running = false;
-    this.directions = [];
-    this.stepSize = 0.00001;
+    this.activeKeys = [];
+    this.movementStepSize = 0.00001;
+    this.rotationStepSize = 1;
+    this.direction = 0;         // direction in degrees, north = 0, south = 180
 
     SchipperEvents.subscribe('KEYS_CHANGED', onKeysChanged);
 
     let that = this;
 
     function onKeysChanged (data) {
-        let activeDirections = Object.keys(data).filter(key => data[key]);
-        if (activeDirections.length) {
-            that.setDirections(activeDirections);
+        let activeKeys = Object.keys(data).filter(key => data[key]);
+        if (activeKeys.length) {
+            that.setKeys(activeKeys);
             if (!that.running) {
                 that.start();
             }
@@ -25,20 +38,21 @@ function MovementAnimation (target) {
     function loopFunction () {
 
         let currentPosition = that.target.center;
-        let movement = [0, 0];
+        let acceleration = 0;
         
-        if (that.directions.includes('left')) {
-            movement[0] -= that.stepSize;
+        if (that.activeKeys.includes('left')) {
+            that.changeDirection(-that.rotationStepSize);
         }
-        if (that.directions.includes('up')) {
-            movement[1] += that.stepSize;
+        if (that.activeKeys.includes('right')) {
+            that.changeDirection(that.rotationStepSize);
         }
-        if (that.directions.includes('right')) {
-            movement[0] += that.stepSize;
+        if (that.activeKeys.includes('up')) {
+            acceleration += that.movementStepSize;
         }
-        if (that.directions.includes('down')) {
-            movement[1] -= that.stepSize;
+        if (that.activeKeys.includes('down')) {
+            acceleration -= that.movementStepSize;
         }
+        let movement = rotateVector(0, acceleration, that.direction);
         if (that.target.onWater(currentPosition[0] + movement[0], currentPosition[1] + movement[1])) {
             that.target.moveBy(movement[0], movement[1]);
         }
@@ -47,13 +61,24 @@ function MovementAnimation (target) {
         }
     }
 
+    this.changeDirection = function (degree) {
+        let nextRotation = this.direction + degree;
+        if (nextRotation < 0) {
+            nextRotation = 360 - nextRotation;
+        }
+        if (nextRotation >= 360) {
+            nextRotation = nextRotation % 360;
+        }
+        this.direction = nextRotation;
+    }
+
     this.start = function () {
         this.running = true;
         loopFunction();
     }
 
-    this.setDirections = function (directions) {
-        this.directions = directions;
+    this.setKeys = function (keys) {
+        this.activeKeys = keys;
     }
 
     this.stop = function () {
