@@ -1,21 +1,18 @@
 import SchipperView from './view/schipper-view';
 import SchipperInputObserver from './schipper-input-observer';
 
-function Schipper (root, position) {
-    this.inputObserver = new SchipperInputObserver();
-
-    let that = this;
-
-    this.initView = function (root, position) {
-        that.view = new SchipperView(root, position);
+export default class Schipper {
+    constructor(root, position) {
+        this.inputObserver = new SchipperInputObserver();
+        this.initView(root, position);
     }
 
-    this.destroyView = function () {
-        that.view.destroy();
-        that.view = null;
+    initView(root, position) {
+        this.view = new SchipperView(root, position);
     }
 
-    this.initView(root, position);
+    destroyView() {
+        this.view.destroy();
+        this.view = null;
+    }
 }
-
-export default Schipper;

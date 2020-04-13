@@ -1,15 +1,18 @@
 import SchipperEvents from './schipper-events';
 
-function SchipperInputObserver () {
+export default class SchipperInputObserver {
+    constructor() {
+        this.directionStates = {
+            left: false,
+            up: false,
+            right: false,
+            down: false
+        };
+        window.addEventListener('keydown', this.listener.bind(this));
+        window.addEventListener('keyup', this.listener.bind(this));
+    }
 
-    this.directionStates = {
-        left: false,
-        up: false,
-        right: false,
-        down: false
-    };
-
-    let listener = event => {
+    listener(event) {
         let oldDirectionStates = Object.assign({}, this.directionStates);
         let direction;
         switch(event.keyCode) {
@@ -36,9 +39,4 @@ function SchipperInputObserver () {
             SchipperEvents.publish('KEYS_CHANGED', this.directionStates);
         }
     }
-
-    window.addEventListener('keydown', listener);
-    window.addEventListener('keyup', listener);
 }
-
-export default SchipperInputObserver;
