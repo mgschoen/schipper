@@ -1,9 +1,9 @@
-import Helpers from '../../helpers';
+import TransformStyleHelpers from '../helpers/transform-style-helpers';
 
 const {
     getTransformStyles,
     setTransformStyles
-} = Helpers;
+} = TransformStyleHelpers;
 
 function AnimationPlayer (mapboxMap, markerElement) {
 
