@@ -1,6 +1,6 @@
 import Constants from '../../constants';
 
-const { animation } = Constants;
+const { ANIMATION } = Constants;
 
 function ZoomAnimation (target) {
     
@@ -12,19 +12,19 @@ function ZoomAnimation (target) {
     function loopFunction () {
         let numVisibleLandFeatures = that.target.numLandFeatures();
         let performingZoom = false;
-        if (numVisibleLandFeatures < animation.zoomFeatureThresholdMin 
+        if (numVisibleLandFeatures < ANIMATION.zoomFeatureThresholdMin 
             && !that.isZooming) {
                 that.target.zoomOut();
                 performingZoom = true;
         }
-        if (numVisibleLandFeatures > animation.zoomFeatureThresholdMax
+        if (numVisibleLandFeatures > ANIMATION.zoomFeatureThresholdMax
             && !that.isZooming) {
                 that.target.zoomIn();
                 performingZoom = true;
         }
         if (performingZoom) {
             that.isZooming = true;
-            setTimeout(_ => that.isZooming = false, animation.zoomDuration);
+            setTimeout(_ => that.isZooming = false, ANIMATION.zoomDuration);
         }
         window.requestAnimationFrame(loopFunction);
     }

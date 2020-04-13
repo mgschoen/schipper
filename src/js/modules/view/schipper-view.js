@@ -3,13 +3,12 @@ import AnimationPlayer from './_animation-player';
 import MovementAnimation from '../animation/movement-animation';
 import ZoomAnimation from '../animation/zoom-animation';
 
-const { animation } = Constants;
-const STYLE_SPECIFICATION_URL = 'https://api.maptiler.com/maps/2bc5df47-f6a5-4678-a93c-790959900538/style.json?key=g96wJs8JvSyliKdi1Q1v';
+const { ANIMATION, MAP } = Constants;
 const MAP_OPTIONS = {
     attributionControl: false,
     interactive: false,
-    style: STYLE_SPECIFICATION_URL,
-    zoom: animation.initialZoom
+    style: MAP.sourceUrl,
+    zoom: ANIMATION.initialZoom
 };
 
 function SchipperView (root, position) {
@@ -57,7 +56,7 @@ function SchipperView (root, position) {
                 throw new RangeError('Cannot check onWater status if location is out of viewport');
         }
         let waterPolygons = this.map.queryRenderedFeatures(viewportPosition, {
-            layers: ['water_polygon']
+            layers: [MAP.waterLayerName]
         });
         return waterPolygons.length > 0;
     }
@@ -65,7 +64,7 @@ function SchipperView (root, position) {
     this.numLandFeatures = function () {
         let renderedFeatures = this.map.queryRenderedFeatures();
         let nonWaterFeatures = renderedFeatures.filter(feature => {
-            return feature.source !== 'marker' && feature.sourceLayer !== 'water';
+            return feature.sourceLayer !== MAP.waterLayerName;
         });
         return nonWaterFeatures.length;
     }
@@ -74,14 +73,14 @@ function SchipperView (root, position) {
         if (!this.loaded) {
             return;
         }
-        this.animationPlayer.zoomBy(-animation.zoomStep, animation.zoomDuration);
+        this.animationPlayer.zoomBy(-ANIMATION.zoomStep, ANIMATION.zoomDuration);
     }
 
     this.zoomIn = function () {
         if (!this.loaded) {
             return;
         }
-        this.animationPlayer.zoomBy(animation.zoomStep, animation.zoomDuration);
+        this.animationPlayer.zoomBy(ANIMATION.zoomStep, ANIMATION.zoomDuration);
     }
 
     this.setMarkerRotation = function (degree) {
