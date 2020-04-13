@@ -12,48 +12,55 @@ const MAP_OPTIONS = {
     zoom: ANIMATION.initialZoom
 };
 
-function SchipperView (root, position) {
-    this.root = typeof root === 'string' 
-        ? document.querySelector('#' + root)
-        : root;
-    this.center = position;
-    this.map = new mapboxgl.Map({
-        container: root,
-        center: this.center,
-        ...MAP_OPTIONS
-    });
-    this.marker = null;
+export default class SchipperView {
+    constructor(root, position) {
+        this.root = typeof root === 'string' 
+            ? document.querySelector('#' + root)
+            : root;
+        this.center = position;
+        this.map = new mapboxgl.Map({
+            container: root,
+            center: this.center,
+            ...MAP_OPTIONS
+        });
+        this.marker = null;
 
-    this.animationPlayer = null;
-    this.movementAnimation = new MovementAnimation(this);
-    this.zoomAnimation = new ZoomAnimation(this);
+        this.animationPlayer = null;
+        this.movementAnimation = new MovementAnimation(this);
+        this.zoomAnimation = new ZoomAnimation(this);
+        
+        this.loaded = false;
+
+        this.init();
+    }
+
+    init() {
+        this.map.on('load', this.onMapLoaded.bind(this));
+        SchipperEvents.subscribe('POSITION_CHANGED', this.onPositionChanged.bind(this));
+    }
     
-    this.loaded = false;
-
-    this.map.on('load', function() {
+    onMapLoaded() {
         var marker = document.createElement('figure');
         marker.className = 'pc';
         this.root.insertAdjacentElement('afterend', marker);
         this.marker = marker;
         this.animationPlayer = new AnimationPlayer(this.map, this.marker);
         this.loaded = true;
-    }.bind(this));
+    }
 
-    SchipperEvents.subscribe('POSITION_CHANGED', onPositionChanged.bind(this));
-
-    function onPositionChanged (coords) {
+    onPositionChanged(coords) {
         this.center[0] = coords[0] || this.center[0];
         this.center[1] = coords[1] || this.center[1];
     }
 
-    this.moveTo = function (x, y) {
+    moveTo(x, y) {
         if (!this.loaded) {
             return;
         }
         this.animationPlayer.moveTo(x, y);
     }
 
-    this.onWater = function (lat, lon) {
+    onWater(lat, lon) {
         let viewportWidth = this.map._container.offsetWidth;
         let viewportHeight = this.map._container.offsetHeight;
         let viewportPosition = this.map.project([lat,lon]);
@@ -67,7 +74,7 @@ function SchipperView (root, position) {
         return waterPolygons.length > 0;
     }
 
-    this.numLandFeatures = function () {
+    numLandFeatures() {
         let renderedFeatures = this.map.queryRenderedFeatures();
         let nonWaterFeatures = renderedFeatures.filter(feature => {
             return feature.sourceLayer !== MAP.waterLayerName;
@@ -75,21 +82,21 @@ function SchipperView (root, position) {
         return nonWaterFeatures.length;
     }
 
-    this.zoomOut = function () {
+    zoomOut() {
         if (!this.loaded) {
             return;
         }
         this.animationPlayer.zoomBy(-ANIMATION.zoomStep, ANIMATION.zoomDuration);
     }
 
-    this.zoomIn = function () {
+    zoomIn() {
         if (!this.loaded) {
             return;
         }
         this.animationPlayer.zoomBy(ANIMATION.zoomStep, ANIMATION.zoomDuration);
     }
 
-    this.setMarkerRotation = function (degree) {
+    setMarkerRotation(degree) {
         if (!this.loaded) {
             return;
         }
@@ -100,10 +107,8 @@ function SchipperView (root, position) {
         this.animationPlayer.rotateMarkerTo(degree);
     }
 
-    this.destroy = function () {
+    destroy() {
         this.map.remove();
         this.marker.remove();
     }
 }
-
-export default SchipperView;
