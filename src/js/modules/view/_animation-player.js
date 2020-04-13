@@ -46,7 +46,7 @@ function AnimationPlayer (mapboxMap, markerElement) {
 
     this._animationStep = function () {
         let now = new Date().getTime();
-        if (this._moveTargetX || this._moveTargetY) {
+        if (this.moving) {
             let calcPosition = this._calculateIntermediatePosition(now);
             if (Number.isNaN(calcPosition.x) || Number.isNaN(calcPosition.y)) {
                 return;
@@ -59,7 +59,7 @@ function AnimationPlayer (mapboxMap, markerElement) {
                 this.moving = false;
             }
         }
-        if (this._zoomTarget) {
+        if (this.zooming) {
             let calcZoom = this._calculateIntermediateZoom(now);
             this._map.setZoom(calcZoom.zoom);
             this._resizeMarker();
@@ -69,7 +69,7 @@ function AnimationPlayer (mapboxMap, markerElement) {
                 this.zooming = false;
             }
         }
-        if (this._markerRotationTarget) {
+        if (this.rotatingMarker) {
             let calcMarkerRotation = this._calculateIntermediateMarkerRotation(now);
             setTransformStyles(this._marker, {rotate: `${calcMarkerRotation.markerRotation}deg`});
             this._markerRotation = calcMarkerRotation.markerRotation;
