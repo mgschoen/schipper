@@ -1,13 +1,16 @@
-import Constants from '../../constants';
+import Helpers from '../../helpers';
 
-const { animation } = Constants;
+const {
+    getTransformStyles,
+    setTransformStyles
+} = Helpers;
 
 function AnimationPlayer (mapboxMap, markerElement) {
 
     this.animating = false;
     this.moving = false;
     this.zooming = false;
-    this.rotating = false;
+    this.rotatingMarker = false;
 
     this._map = mapboxMap;
     this._marker = markerElement;
@@ -17,29 +20,29 @@ function AnimationPlayer (mapboxMap, markerElement) {
     this._x = this._map.getCenter().lng;
     this._y = this._map.getCenter().lat;
     this._zoom = this._map.getZoom();
-    this._rotation = this._map.getBearing();
+    this._markerRotation = parseFloat(getTransformStyles(this._marker).rotate) || 0;
 
     // where we were
     this._moveOriginX = null;
     this._moveOriginY = null;
     this._zoomOrigin = null;
-    this._rotationOrigin = null;
+    this._markerRotationOrigin = null;
 
     // where we want to get
     this._moveTargetX = null;
     this._moveTargetY = null;
     this._zoomTarget = null;
-    this._rotationTarget = null;
+    this._markerRotationTarget = null;
 
     // when we want to get there
     this._doneMovingAt = null;
     this._doneZoomingAt = null;
-    this._doneRotatingAt = null;
+    this._doneRotatingMarkerAt = null;
 
     // how long we are planning it to take us
     this._moveDuration = null;
     this._zoomDuration = null;
-    this._rotationDuration = null;
+    this._markerRotationDuration = null;
 
     this._animationStep = function () {
         let now = new Date().getTime();
@@ -66,17 +69,16 @@ function AnimationPlayer (mapboxMap, markerElement) {
                 this.zooming = false;
             }
         }
-        if (this._rotationTarget) {
-            let calcRotation = this._calculateIntermediateRotation(now);
-            this._map.setBearing(calcRotation.rotation);
-            this._rotation = calcRotation.rotation;
-            if (calcRotation.percentagePassed >= 1) {
-                this._resetRotation();
-                this._rotation = this._map.getBearing();
-                this.rotating = false;
+        if (this._markerRotationTarget) {
+            let calcMarkerRotation = this._calculateIntermediateMarkerRotation(now);
+            setTransformStyles(this._marker, {rotate: `${calcMarkerRotation.markerRotation}deg`});
+            this._markerRotation = calcMarkerRotation.markerRotation;
+            if (calcMarkerRotation.percentagePassed >= 1) {
+                this._resetMarkerRotation();
+                this.rotatingMarker = false;
             }
         }
-        this.animating = this.moving || this.zooming || this.rotating;
+        this.animating = this.moving || this.zooming || this.rotatingMarker;
         if (this.animating) {
             window.requestAnimationFrame(this._animationStep.bind(this));
         }
@@ -105,12 +107,16 @@ function AnimationPlayer (mapboxMap, markerElement) {
         };
     }
 
-    this._calculateIntermediateRotation = function (time) {
-        let percentagePassed = this._calculatePercentagePassed(this._rotationDuration, this._doneRotatingAt, time);
-        let rotationDistance = this._rotationTarget - this._rotationOrigin;
-        let calcRotation = this._rotationOrigin + (rotationDistance * percentagePassed);
+    this._calculateIntermediateMarkerRotation = function (time) {
+        let percentagePassed = this._calculatePercentagePassed(this._markerRotationDuration, this._doneRotatingMarkerAt, time);
+        let rotationDistance = this._markerRotationTarget - this._markerRotationOrigin;
+        let calcRotation = this._markerRotationOrigin + (rotationDistance * percentagePassed);
+        calcRotation = calcRotation % 360;
+        if (calcRotation < 0) {
+            calcRotation += 360;
+        }
         return {
-            rotation: calcRotation,
+            markerRotation: calcRotation,
             percentagePassed
         };
     }
@@ -140,16 +146,16 @@ function AnimationPlayer (mapboxMap, markerElement) {
         this._doneZoomingAt = null;
     }
 
-    this._resetRotation = function () {
-        this._rotationOrigin = null;
-        this._rotationTarget = null;
-        this._rotationDuration = null;
-        this._doneRotatingAt = null;
+    this._resetMarkerRotation = function () {
+        this._markerRotationOrigin = null;
+        this._markerRotationTarget = null;
+        this._markerRotationDuration = null;
+        this._doneRotatingMarkerAt = null;
     }
 
     this._resizeMarker = function () {
         let scale = this._map.transform.scale * this._markerScalingFactor;
-        this._marker.style.transform = `scale(${scale})`;
+        setTransformStyles(this._marker, {scale});
     }
 
     this.moveBy = function (x, y, duration) {
@@ -186,16 +192,30 @@ function AnimationPlayer (mapboxMap, markerElement) {
         }
     }
 
-    this.rotateBy = function (deg, duration) {
-        if (this.rotating) {
-            console.warn('Already rotating');
+    this.rotateMarkerTo = function (degree, duration) {
+        if (this.rotatingMarker) {
+            console.warn('Already rotating marker');
             return;
         }
-        this._rotationOrigin = this._rotation;
-        this._rotationTarget = this._rotation + deg;
-        this._rotationDuration = duration || 0;
-        this._doneRotatingAt = new Date().getTime() + this._rotationDuration;
-        this.rotating = true;
+        // make sure we use origin and target values that
+        // - are no further than 180° from each other
+        // - revolve around the [0-360]° scale (small overlaps below and above tolerated)
+        let rotationOrigin = this._markerRotation;
+        let rotationTarget = degree % 360;
+        if (rotationTarget < 0) {
+            rotationTarget += 360;
+        }
+        let rotationDifference = rotationTarget - rotationOrigin;
+        if (rotationDifference > 180) {
+            rotationTarget -= 360;
+        } else if (rotationDifference < -180) {
+            rotationTarget += 360;
+        }
+        this._markerRotationOrigin = rotationOrigin;
+        this._markerRotationTarget = rotationTarget;
+        this._markerRotationDuration = duration || 0;
+        this._doneRotatingMarkerAt = new Date().getTime() + this._markerRotationDuration;
+        this.rotatingMarker = true;
         if (!this.animating) {
             window.requestAnimationFrame(this._animationStep.bind(this));
             this.animating = true;
