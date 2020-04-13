@@ -158,15 +158,15 @@ function AnimationPlayer (mapboxMap, markerElement) {
         setTransformStyles(this._marker, {scale});
     }
 
-    this.moveBy = function (x, y, duration) {
+    this.moveTo = function (x, y, duration) {
         if (this.moving) {
             console.warn('Already moving');
             return;
         }
         this._moveOriginX = this._x;
         this._moveOriginY = this._y;
-        this._moveTargetX = this._x + x;
-        this._moveTargetY = this._y + y;
+        this._moveTargetX = x;
+        this._moveTargetY = y;
         this._moveDuration = duration || 0;
         this._doneMovingAt = new Date().getTime() + this._moveDuration;
         this.moving = true;

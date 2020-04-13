@@ -1,13 +1,13 @@
 import SchipperEvents from '../schipper-events';
-import AlgebraHelpers from '../helpers/algebra-helpers';
+import CartographyHelpers from '../helpers/cartography-helpers';
 
-const { rotateVector } = AlgebraHelpers;
+const { translateWithBearing } = CartographyHelpers;
 
 function MovementAnimation (target) {
     this.target = target;
     this.running = false;
     this.activeKeys = [];
-    this.movementStepSize = 0.00001;
+    this.movementStepSize = 0.001;
     this.rotationStepSize = 1;
     this.direction = 0;         // direction in degrees, north = 0, south = 180
 
@@ -50,9 +50,17 @@ function MovementAnimation (target) {
             that.target.setMarkerRotation(that.direction);
         }
         if (acceleration) {
-            let movement = rotateVector(0, acceleration, that.direction);
-            if (that.target.onWater(currentPosition[0] + movement[0], currentPosition[1] + movement[1])) {
-                that.target.moveBy(movement[0], movement[1]);
+            let movementDirection = (acceleration < 0) 
+                ? (that.direction + 180) % 360
+                : that.direction;
+            let nextPosition = translateWithBearing(
+                currentPosition[0],
+                currentPosition[1],
+                that.movementStepSize,
+                movementDirection
+            );
+            if (that.target.onWater(nextPosition[0], nextPosition[1])) {
+                that.target.moveTo(nextPosition[0], nextPosition[1]);
             }
         }
         if (that.running) {

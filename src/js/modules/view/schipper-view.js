@@ -39,13 +39,13 @@ function SchipperView (root, position) {
         this.loaded = true;
     }.bind(this));
 
-    this.moveBy = function (x, y) {
+    this.moveTo = function (x, y) {
         if (!this.loaded) {
             return;
         }
-        this.animationPlayer.moveBy(x, y);
-        this.center[0] += x;
-        this.center[1] += y;
+        this.animationPlayer.moveTo(x, y);
+        this.center[0] = x;
+        this.center[1] = y;
     }
 
     this.onWater = function (lat, lon) {
