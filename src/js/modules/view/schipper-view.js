@@ -83,6 +83,17 @@ function SchipperView (root, position) {
         }
         this.animationPlayer.zoomBy(animation.zoomStep, animation.zoomDuration);
     }
+
+    this.setMarkerRotation = function (degree) {
+        if (!this.loaded) {
+            return;
+        }
+        if (Number.isNaN(degree)) {
+            console.warn(`Cannot rotate marker: ${degree} is not a number`);
+            return;
+        }
+        this.animationPlayer.rotateMarkerTo(degree);
+    }
 }
 
 export default SchipperView;
