@@ -64,7 +64,7 @@ function MovementAnimation (target) {
     this.changeDirection = function (degree) {
         let nextRotation = this.direction + degree;
         if (nextRotation < 0) {
-            nextRotation = 360 - nextRotation;
+            nextRotation = 360 + nextRotation;
         }
         if (nextRotation >= 360) {
             nextRotation = nextRotation % 360;
