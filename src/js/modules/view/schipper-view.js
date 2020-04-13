@@ -2,6 +2,7 @@ import Constants from '../../constants';
 import AnimationPlayer from './_animation-player';
 import MovementAnimation from '../animation/movement-animation';
 import ZoomAnimation from '../animation/zoom-animation';
+import SchipperEvents from '../schipper-events';
 
 const { ANIMATION, MAP } = Constants;
 const MAP_OPTIONS = {
@@ -38,13 +39,18 @@ function SchipperView (root, position) {
         this.loaded = true;
     }.bind(this));
 
+    SchipperEvents.subscribe('POSITION_CHANGED', onPositionChanged.bind(this));
+
+    function onPositionChanged (coords) {
+        this.center[0] = coords[0] || this.center[0];
+        this.center[1] = coords[1] || this.center[1];
+    }
+
     this.moveTo = function (x, y) {
         if (!this.loaded) {
             return;
         }
         this.animationPlayer.moveTo(x, y);
-        this.center[0] = x;
-        this.center[1] = y;
     }
 
     this.onWater = function (lat, lon) {

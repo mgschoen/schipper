@@ -1,5 +1,6 @@
 const _subscriptions = {
-    KEYS_CHANGED: []
+    KEYS_CHANGED: [],
+    POSITION_CHANGED: []
 }
 
 const SchipperEvents = {

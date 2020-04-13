@@ -1,3 +1,5 @@
+import SchipperEvents from '../schipper-events';
+
 import TransformStyleHelpers from '../helpers/transform-style-helpers';
 
 const {
@@ -44,6 +46,13 @@ function AnimationPlayer (mapboxMap, markerElement) {
     this._zoomDuration = null;
     this._markerRotationDuration = null;
 
+    SchipperEvents.subscribe('POSITION_CHANGED', onPositionChanged.bind(this));
+
+    function onPositionChanged (coords) {
+        this._x = coords[0] || this._x;
+        this._y = coords[1] || this._y;
+    }
+
     this._animationStep = function () {
         let now = new Date().getTime();
         if (this.moving) {
@@ -52,12 +61,11 @@ function AnimationPlayer (mapboxMap, markerElement) {
                 return;
             }
             this._map.setCenter({lng: calcPosition.x, lat: calcPosition.y});
-            this._x = calcPosition.x;
-            this._y = calcPosition.y;
             if (calcPosition.percentagePassed >= 1) {
                 this._resetMovement();
                 this.moving = false;
             }
+            SchipperEvents.publish('POSITION_CHANGED', [calcPosition.x, calcPosition.y]);
         }
         if (this.zooming) {
             let calcZoom = this._calculateIntermediateZoom(now);
