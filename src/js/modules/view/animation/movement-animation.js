@@ -1,7 +1,5 @@
 import SchipperEvents from '../../schipper-events';
-import CartographyHelpers from '../../helpers/cartography-helpers';
-
-const { translateWithBearing } = CartographyHelpers;
+import { translateWithBearing } from '../../helpers/cartography-helpers';
 
 function MovementAnimation (target) {
     this.target = target;

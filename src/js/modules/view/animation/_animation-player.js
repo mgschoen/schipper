@@ -1,11 +1,9 @@
 import SchipperEvents from '../../schipper-events';
 
-import TransformStyleHelpers from '../../helpers/transform-style-helpers';
-
-const {
+import {
     getTransformStyles,
     setTransformStyles
-} = TransformStyleHelpers;
+} from '../../helpers/transform-style-helpers';
 
 function AnimationPlayer (mapboxMap, markerElement) {
 

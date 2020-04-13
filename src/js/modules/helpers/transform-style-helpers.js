@@ -1,4 +1,12 @@
-function getTransformStyles (element) {
+function serializeTransformStyles (styleObject) {
+    let serializedString = '';
+    for (let style in styleObject) {
+        serializedString += `${style}(${styleObject[style]}) `;
+    }
+    return serializedString;
+}
+
+export function getTransformStyles (element) {
     if (typeof element !== 'object') {
         return;
     }
@@ -15,15 +23,7 @@ function getTransformStyles (element) {
     return transformations;
 }
 
-function serializeTransformStyles (styleObject) {
-    let serializedString = '';
-    for (let style in styleObject) {
-        serializedString += `${style}(${styleObject[style]}) `;
-    }
-    return serializedString;
-}
-
-function setTransformStyles (element, styleObject) {
+export function setTransformStyles (element, styleObject) {
     if (typeof element !== 'object') {
         return;
     }
@@ -36,9 +36,4 @@ function setTransformStyles (element, styleObject) {
     }
     let serializedStyles = serializeTransformStyles(styles);
     element.style.transform = serializedStyles;
-}
-
-export default {
-    getTransformStyles,
-    setTransformStyles
 }
