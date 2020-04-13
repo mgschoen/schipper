@@ -39,12 +39,13 @@ function MovementAnimation (target) {
 
         let currentPosition = that.target.center;
         let acceleration = 0;
+        let steering = 0;
         
         if (that.activeKeys.includes('left')) {
-            that.changeDirection(-that.rotationStepSize);
+            steering -= that.rotationStepSize;
         }
         if (that.activeKeys.includes('right')) {
-            that.changeDirection(that.rotationStepSize);
+            steering += that.rotationStepSize;
         }
         if (that.activeKeys.includes('up')) {
             acceleration += that.movementStepSize;
@@ -52,9 +53,15 @@ function MovementAnimation (target) {
         if (that.activeKeys.includes('down')) {
             acceleration -= that.movementStepSize;
         }
-        let movement = rotateVector(0, acceleration, that.direction);
-        if (that.target.onWater(currentPosition[0] + movement[0], currentPosition[1] + movement[1])) {
-            that.target.moveBy(movement[0], movement[1]);
+        if (steering) {
+            that.changeDirection(steering);
+            that.target.setMarkerRotation(that.direction);
+        }
+        if (acceleration) {
+            let movement = rotateVector(0, acceleration, that.direction);
+            if (that.target.onWater(currentPosition[0] + movement[0], currentPosition[1] + movement[1])) {
+                that.target.moveBy(movement[0], movement[1]);
+            }
         }
         if (that.running) {
             window.requestAnimationFrame(loopFunction);
