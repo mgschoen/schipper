@@ -99,6 +99,11 @@ function SchipperView (root, position) {
         }
         this.animationPlayer.rotateMarkerTo(degree);
     }
+
+    this.destroy = function () {
+        this.map.remove();
+        this.marker.remove();
+    }
 }
 
 export default SchipperView;
