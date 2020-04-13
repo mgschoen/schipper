@@ -1,5 +1,5 @@
-import SchipperEvents from '../schipper-events';
-import CartographyHelpers from '../helpers/cartography-helpers';
+import SchipperEvents from '../../schipper-events';
+import CartographyHelpers from '../../helpers/cartography-helpers';
 
 const { translateWithBearing } = CartographyHelpers;
 

@@ -1,6 +1,6 @@
-import SchipperEvents from '../schipper-events';
+import SchipperEvents from '../../schipper-events';
 
-import TransformStyleHelpers from '../helpers/transform-style-helpers';
+import TransformStyleHelpers from '../../helpers/transform-style-helpers';
 
 const {
     getTransformStyles,

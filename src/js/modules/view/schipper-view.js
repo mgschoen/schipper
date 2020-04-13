@@ -1,7 +1,7 @@
 import Constants from '../../constants';
-import AnimationPlayer from './_animation-player';
-import MovementAnimation from '../animation/movement-animation';
-import ZoomAnimation from '../animation/zoom-animation';
+import AnimationPlayer from './animation/_animation-player';
+import MovementAnimation from './animation/movement-animation';
+import ZoomAnimation from './animation/zoom-animation';
 import SchipperEvents from '../schipper-events';
 
 const { ANIMATION, MAP } = Constants;
