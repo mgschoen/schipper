@@ -2,34 +2,34 @@ import Constants from '../../../constants';
 
 const { ANIMATION } = Constants;
 
-function ZoomAnimation (target) {
-    
-    this.target = target;
-    this.isZooming = false;
+export default class ZoomAnimation {
+    constructor(target) {
+        this.target = target;
+        this.isZooming = false;
+        this.init();
+    }
 
-    let that = this;
+    init() {
+        window.requestAnimationFrame(this.loop.bind(this));
+    }
 
-    function loopFunction () {
-        let numVisibleLandFeatures = that.target.numLandFeatures();
+    loop() {
+        let numVisibleLandFeatures = this.target.numLandFeatures();
         let performingZoom = false;
         if (numVisibleLandFeatures < ANIMATION.zoomFeatureThresholdMin 
-            && !that.isZooming) {
-                that.target.zoomOut();
+            && !this.isZooming) {
+                this.target.zoomOut();
                 performingZoom = true;
         }
         if (numVisibleLandFeatures > ANIMATION.zoomFeatureThresholdMax
-            && !that.isZooming) {
-                that.target.zoomIn();
+            && !this.isZooming) {
+                this.target.zoomIn();
                 performingZoom = true;
         }
         if (performingZoom) {
-            that.isZooming = true;
-            setTimeout(_ => that.isZooming = false, ANIMATION.zoomDuration);
+            this.isZooming = true;
+            setTimeout(_ => this.isZooming = false, ANIMATION.zoomDuration);
         }
-        window.requestAnimationFrame(loopFunction);
+        window.requestAnimationFrame(this.loop.bind(this));
     }
-
-    window.requestAnimationFrame(loopFunction);
 }
-
-export default ZoomAnimation;

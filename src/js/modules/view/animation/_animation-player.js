@@ -5,53 +5,58 @@ import {
     setTransformStyles
 } from '../../helpers/transform-style-helpers';
 
-function AnimationPlayer (mapboxMap, markerElement) {
+export default class AnimationPlayer {
+    constructor(mapboxMap, markerElement) {
+        this.animating = false;
+        this.moving = false;
+        this.zooming = false;
+        this.rotatingMarker = false;
 
-    this.animating = false;
-    this.moving = false;
-    this.zooming = false;
-    this.rotatingMarker = false;
+        this._map = mapboxMap;
+        this._marker = markerElement;
+        this._markerScalingFactor = 1 / this._map.transform.scale;
 
-    this._map = mapboxMap;
-    this._marker = markerElement;
-    this._markerScalingFactor = 1 / this._map.transform.scale;
+        // where we are
+        this._x = this._map.getCenter().lng;
+        this._y = this._map.getCenter().lat;
+        this._zoom = this._map.getZoom();
+        this._markerRotation = parseFloat(getTransformStyles(this._marker).rotate) || 0;
 
-    // where we are
-    this._x = this._map.getCenter().lng;
-    this._y = this._map.getCenter().lat;
-    this._zoom = this._map.getZoom();
-    this._markerRotation = parseFloat(getTransformStyles(this._marker).rotate) || 0;
+        // where we were
+        this._moveOriginX = null;
+        this._moveOriginY = null;
+        this._zoomOrigin = null;
+        this._markerRotationOrigin = null;
 
-    // where we were
-    this._moveOriginX = null;
-    this._moveOriginY = null;
-    this._zoomOrigin = null;
-    this._markerRotationOrigin = null;
+        // where we want to get
+        this._moveTargetX = null;
+        this._moveTargetY = null;
+        this._zoomTarget = null;
+        this._markerRotationTarget = null;
 
-    // where we want to get
-    this._moveTargetX = null;
-    this._moveTargetY = null;
-    this._zoomTarget = null;
-    this._markerRotationTarget = null;
+        // when we want to get there
+        this._doneMovingAt = null;
+        this._doneZoomingAt = null;
+        this._doneRotatingMarkerAt = null;
 
-    // when we want to get there
-    this._doneMovingAt = null;
-    this._doneZoomingAt = null;
-    this._doneRotatingMarkerAt = null;
+        // how long we are planning it to take us
+        this._moveDuration = null;
+        this._zoomDuration = null;
+        this._markerRotationDuration = null;
 
-    // how long we are planning it to take us
-    this._moveDuration = null;
-    this._zoomDuration = null;
-    this._markerRotationDuration = null;
+        this.init();
+    }
 
-    SchipperEvents.subscribe('POSITION_CHANGED', onPositionChanged.bind(this));
+    init() {
+        SchipperEvents.subscribe('POSITION_CHANGED', this.onPositionChanged.bind(this));
+    }
 
-    function onPositionChanged (coords) {
+    onPositionChanged(coords) {
         this._x = coords[0] || this._x;
         this._y = coords[1] || this._y;
     }
 
-    this._animationStep = function () {
+    _animationStep() {
         let now = new Date().getTime();
         if (this.moving) {
             let calcPosition = this._calculateIntermediatePosition(now);
@@ -90,7 +95,7 @@ function AnimationPlayer (mapboxMap, markerElement) {
         }
     }
 
-    this._calculateIntermediatePosition = function (time) {
+    _calculateIntermediatePosition(time) {
         let percentagePassed = this._calculatePercentagePassed(this._moveDuration, this._doneMovingAt, time);
         let distanceX = this._moveTargetX - this._moveOriginX;
         let distanceY = this._moveTargetY - this._moveOriginY;
@@ -103,7 +108,7 @@ function AnimationPlayer (mapboxMap, markerElement) {
         };
     }
 
-    this._calculateIntermediateZoom = function (time) {
+    _calculateIntermediateZoom(time) {
         let percentagePassed = this._calculatePercentagePassed(this._zoomDuration, this._doneZoomingAt, time);
         let zoomDistance = this._zoomTarget - this._zoomOrigin;
         let calcZoom = this._zoomOrigin + (zoomDistance * percentagePassed);
@@ -113,7 +118,7 @@ function AnimationPlayer (mapboxMap, markerElement) {
         };
     }
 
-    this._calculateIntermediateMarkerRotation = function (time) {
+    _calculateIntermediateMarkerRotation(time) {
         let percentagePassed = this._calculatePercentagePassed(this._markerRotationDuration, this._doneRotatingMarkerAt, time);
         let rotationDistance = this._markerRotationTarget - this._markerRotationOrigin;
         let calcRotation = this._markerRotationOrigin + (rotationDistance * percentagePassed);
@@ -127,7 +132,7 @@ function AnimationPlayer (mapboxMap, markerElement) {
         };
     }
 
-    this._calculatePercentagePassed = function (duration, end, now) {
+    _calculatePercentagePassed(duration, end, now) {
         let timePassed = duration - (end - now);
         let percentagePassed = timePassed / duration;
         if (percentagePassed > 1) {
@@ -136,7 +141,7 @@ function AnimationPlayer (mapboxMap, markerElement) {
         return percentagePassed
     }
 
-    this._resetMovement = function () {
+    _resetMovement() {
         this._moveOriginX = null;
         this._moveOriginY = null;
         this._moveTargetX = null;
@@ -145,26 +150,26 @@ function AnimationPlayer (mapboxMap, markerElement) {
         this._doneMovingAt = null;
     }
 
-    this._resetZoom = function () {
+    _resetZoom() {
         this._zoomOrigin = null;
         this._zoomTarget = null;
         this._zoomDuration = null;
         this._doneZoomingAt = null;
     }
 
-    this._resetMarkerRotation = function () {
+    _resetMarkerRotation() {
         this._markerRotationOrigin = null;
         this._markerRotationTarget = null;
         this._markerRotationDuration = null;
         this._doneRotatingMarkerAt = null;
     }
 
-    this._resizeMarker = function () {
+    _resizeMarker() {
         let scale = this._map.transform.scale * this._markerScalingFactor;
         setTransformStyles(this._marker, {scale});
     }
 
-    this.moveTo = function (x, y, duration) {
+    moveTo(x, y, duration) {
         if (this.moving) {
             console.warn('Already moving');
             return;
@@ -182,7 +187,7 @@ function AnimationPlayer (mapboxMap, markerElement) {
         }
     }
 
-    this.zoomBy = function (zoom, duration) {
+    zoomBy(zoom, duration) {
         if (this.zooming) {
             console.warn('Already zooming');
             return;
@@ -198,7 +203,7 @@ function AnimationPlayer (mapboxMap, markerElement) {
         }
     }
 
-    this.rotateMarkerTo = function (degree, duration) {
+    rotateMarkerTo(degree, duration) {
         if (this.rotatingMarker) {
             console.warn('Already rotating marker');
             return;
@@ -229,5 +234,3 @@ function AnimationPlayer (mapboxMap, markerElement) {
     }
 
 }
-
-export default AnimationPlayer;

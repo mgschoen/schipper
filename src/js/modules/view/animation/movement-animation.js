@@ -1,72 +1,75 @@
 import SchipperEvents from '../../schipper-events';
 import { translateWithBearing } from '../../helpers/cartography-helpers';
 
-function MovementAnimation (target) {
-    this.target = target;
-    this.running = false;
-    this.activeKeys = [];
-    this.movementStepSize = 0.001;
-    this.rotationStepSize = 1;
-    this.direction = 0;         // direction in degrees, north = 0, south = 180
+export default class MovementAnimation {
+    constructor(target) {
+        this.target = target;
+        this.running = false;
+        this.activeKeys = [];
+        this.movementStepSize = 0.001;
+        this.rotationStepSize = 1;
+        this.direction = 0;         // direction in degrees, north = 0, south = 180
 
-    SchipperEvents.subscribe('KEYS_CHANGED', onKeysChanged);
+        this.init();
+    }
 
-    let that = this;
+    init() {
+        SchipperEvents.subscribe('KEYS_CHANGED', this.onKeysChanged.bind(this));
+    }
 
-    function onKeysChanged (data) {
+    onKeysChanged(data) {
         let activeKeys = Object.keys(data).filter(key => data[key]);
         if (activeKeys.length) {
-            that.setKeys(activeKeys);
-            if (!that.running) {
-                that.start();
+            this.setKeys(activeKeys);
+            if (!this.running) {
+                this.start();
             }
         } else {
-            that.stop();
+            this.stop();
         }
     }
 
-    function loopFunction () {
-
-        let currentPosition = that.target.center;
+    loop() {
+        let currentPosition = this.target.center;
         let acceleration = 0;
         let steering = 0;
         
-        if (that.activeKeys.includes('left')) {
-            steering -= that.rotationStepSize;
+        if (this.activeKeys.includes('left')) {
+            steering -= this.rotationStepSize;
         }
-        if (that.activeKeys.includes('right')) {
-            steering += that.rotationStepSize;
+        if (this.activeKeys.includes('right')) {
+            steering += this.rotationStepSize;
         }
-        if (that.activeKeys.includes('up')) {
-            acceleration += that.movementStepSize;
+        if (this.activeKeys.includes('up')) {
+            acceleration += this.movementStepSize;
         }
-        if (that.activeKeys.includes('down')) {
-            acceleration -= that.movementStepSize;
+        if (this.activeKeys.includes('down')) {
+            acceleration -= this.movementStepSize;
         }
         if (steering) {
-            that.changeDirection(steering);
-            that.target.setMarkerRotation(that.direction);
+            this.changeDirection(steering);
+            this.target.setMarkerRotation(this.direction);
         }
         if (acceleration) {
             let movementDirection = (acceleration < 0) 
-                ? (that.direction + 180) % 360
-                : that.direction;
+                ? (this.direction + 180) % 360
+                : this.direction;
             let nextPosition = translateWithBearing(
                 currentPosition[0],
                 currentPosition[1],
-                that.movementStepSize,
+                this.movementStepSize,
                 movementDirection
             );
-            if (that.target.onWater(nextPosition[0], nextPosition[1])) {
-                that.target.moveTo(nextPosition[0], nextPosition[1]);
+            if (this.target.onWater(nextPosition[0], nextPosition[1])) {
+                this.target.moveTo(nextPosition[0], nextPosition[1]);
             }
         }
-        if (that.running) {
-            window.requestAnimationFrame(loopFunction);
+        if (this.running) {
+            window.requestAnimationFrame(this.loop.bind(this));
         }
     }
 
-    this.changeDirection = function (degree) {
+    changeDirection(degree) {
         let nextRotation = this.direction + degree;
         if (nextRotation < 0) {
             nextRotation = 360 + nextRotation;
@@ -77,18 +80,16 @@ function MovementAnimation (target) {
         this.direction = nextRotation;
     }
 
-    this.start = function () {
+    start() {
         this.running = true;
-        loopFunction();
+        this.loop();
     }
 
-    this.setKeys = function (keys) {
+    setKeys(keys) {
         this.activeKeys = keys;
     }
 
-    this.stop = function () {
+    stop() {
         this.running = false;
     }
 }
-
-export default MovementAnimation;
