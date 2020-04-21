@@ -14,7 +14,8 @@ export default class MovementAnimation {
     }
 
     init() {
-        SchipperEvents.subscribe('KEYS_CHANGED', this.onKeysChanged.bind(this));
+        this.boundOnKeysChanged = data => this.onKeysChanged(data);
+        SchipperEvents.subscribe('KEYS_CHANGED', this.boundOnKeysChanged);
     }
 
     onKeysChanged(data) {
@@ -91,5 +92,9 @@ export default class MovementAnimation {
 
     stop() {
         this.running = false;
+    }
+
+    destroy() {
+        SchipperEvents.unsubscribe('KEYS_CHANGED', this.boundOnKeysChanged);
     }
 }

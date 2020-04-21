@@ -36,7 +36,8 @@ export default class SchipperView {
 
     init() {
         this.map.on('load', this.onMapLoaded.bind(this));
-        SchipperEvents.subscribe('POSITION_CHANGED', this.onPositionChanged.bind(this));
+        this.boundOnPositionChanged = coords => this.onPositionChanged(coords);
+        SchipperEvents.subscribe('POSITION_CHANGED', this.boundOnPositionChanged);
     }
     
     onMapLoaded() {
@@ -110,5 +111,8 @@ export default class SchipperView {
     destroy() {
         this.map.remove();
         this.marker.remove();
+        this.animationPlayer.destroy();
+        this.movementAnimation.destroy();
+        SchipperEvents.unsubscribe('POSITION_CHANGED', this.boundOnPositionChanged);
     }
 }

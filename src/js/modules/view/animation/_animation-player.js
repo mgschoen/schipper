@@ -48,7 +48,8 @@ export default class AnimationPlayer {
     }
 
     init() {
-        SchipperEvents.subscribe('POSITION_CHANGED', this.onPositionChanged.bind(this));
+        this.boundOnPositionChanged = coords => this.onPositionChanged(coords);
+        SchipperEvents.subscribe('POSITION_CHANGED', this.boundOnPositionChanged);
     }
 
     onPositionChanged(coords) {
@@ -233,4 +234,7 @@ export default class AnimationPlayer {
         }
     }
 
+    destroy() {
+        SchipperEvents.unsubscribe('POSITION_CHANGED', this.boundOnPositionChanged);
+    }
 }
