@@ -6,6 +6,7 @@ export default class ZoomAnimation {
     constructor(target) {
         this.target = target;
         this.isZooming = false;
+        this.active = true;
         this.init();
     }
 
@@ -14,6 +15,9 @@ export default class ZoomAnimation {
     }
 
     loop() {
+        if (!this.active) {
+            return;
+        }
         let numVisibleLandFeatures = this.target.numLandFeatures();
         let performingZoom = false;
         if (numVisibleLandFeatures < ANIMATION.zoomFeatureThresholdMin 
@@ -31,5 +35,9 @@ export default class ZoomAnimation {
             setTimeout(_ => this.isZooming = false, ANIMATION.zoomDuration);
         }
         window.requestAnimationFrame(this.loop.bind(this));
+    }
+
+    destroy() {
+        this.active = false;
     }
 }

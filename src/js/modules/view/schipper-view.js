@@ -113,6 +113,7 @@ export default class SchipperView {
         this.marker.remove();
         this.animationPlayer.destroy();
         this.movementAnimation.destroy();
+        this.zoomAnimation.destroy();
         SchipperEvents.unsubscribe('POSITION_CHANGED', this.boundOnPositionChanged);
     }
 }
