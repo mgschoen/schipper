@@ -10,5 +10,10 @@ export default {
     MAP: {
         sourceUrl: 'https://api.maptiler.com/maps/b57c74a5-567d-40ed-8870-c6b19c96845a/style.json?key=g96wJs8JvSyliKdi1Q1v',
         waterLayerName: 'water'
+    },
+    UI_SETTINGS: {
+        prototypes: {
+            time: '<h3>Verbleibende Zeit</h3><p>__remaining__</p>'
+        }
     }
 }

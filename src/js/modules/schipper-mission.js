@@ -20,6 +20,11 @@ export default class SchipperMission {
     init() {
         this.timeInterval = window.setInterval(this.boundTimeLoop, this.timeIntervalLength);
         SchipperEvents.subscribe('POSITION_CHANGED', this.boundOnPositionChanged);
+        SchipperEvents.publish('MISSION_STARTED', {
+            destination: this.destination,
+            current: this.timeCurrent,
+            total: this.timeTotal
+        });
     }
 
     timeLoop() {

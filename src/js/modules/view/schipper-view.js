@@ -3,8 +3,9 @@ import AnimationPlayer from './animation/_animation-player';
 import MovementAnimation from './animation/movement-animation';
 import ZoomAnimation from './animation/zoom-animation';
 import SchipperEvents from '../schipper-events';
+import UI from './ui/ui';
 
-const { ANIMATION, MAP } = Constants;
+const { ANIMATION, MAP, UI_SETTINGS } = Constants;
 const MAP_OPTIONS = {
     attributionControl: false,
     interactive: false,
@@ -24,6 +25,7 @@ export default class SchipperView {
             ...MAP_OPTIONS
         });
         this.marker = null;
+        this.uiTime = null;
 
         this.animationPlayer = null;
         this.movementAnimation = new MovementAnimation(this);
@@ -41,17 +43,54 @@ export default class SchipperView {
     }
     
     onMapLoaded() {
+        // init marker
         var marker = document.createElement('figure');
         marker.className = 'pc';
         this.root.insertAdjacentElement('afterend', marker);
         this.marker = marker;
+
         this.animationPlayer = new AnimationPlayer(this.map, this.marker);
+        this.boundOnMissionStarted = (data) => this.onMissionStarted(data);
+        SchipperEvents.subscribe('MISSION_STARTED', this.boundOnMissionStarted);
+
         this.loaded = true;
+        SchipperEvents.publish('VIEW_LOADED', this);
+    }
+
+    initUI(initialData) {
+        this.uiTime = new UI('bottom-right', UI_SETTINGS.prototypes.time);
+        this.uiTime.update(this.formatTimeData(initialData));
+        this.root.insertAdjacentElement('afterend', this.uiTime.element);
+
+        this.boundOnMissionTimeChanged = data => this.onMissionTimeChanged(data);
+        SchipperEvents.subscribe('MISSION_TIME_CHANGED', this.boundOnMissionTimeChanged);
     }
 
     onPositionChanged(coords) {
         this.center[0] = coords[0] || this.center[0];
         this.center[1] = coords[1] || this.center[1];
+    }
+
+    onMissionStarted(data) {
+        this.initUI(data);
+        SchipperEvents.unsubscribe('MISSION_STARTED', this.boundOnMissionStarted);
+        this.boundOnMissionStarted = null;
+    }
+
+    onMissionTimeChanged(data) {
+        let formattedData = this.formatTimeData(data);
+        this.uiTime.update(formattedData);
+    }
+
+    formatTimeData(data) {
+        let remaining = data.total - data.current;
+        let remainingSeconds = remaining / 1000;
+        let remainingString = '' + 
+            ((remainingSeconds >= 60) ? Math.floor(remainingSeconds / 60) + 'm' : '') + 
+            remainingSeconds % 60 + 's';
+        return {
+            remaining: remainingString
+        };
     }
 
     moveTo(x, y) {
@@ -114,6 +153,8 @@ export default class SchipperView {
         this.animationPlayer.destroy();
         this.movementAnimation.destroy();
         this.zoomAnimation.destroy();
+        this.uiTime.destroy();
         SchipperEvents.unsubscribe('POSITION_CHANGED', this.boundOnPositionChanged);
+        SchipperEvents.unsubscribe('MISSION_TIME_CHANGED', this.boundOnMissionTimeChanged);
     }
 }
