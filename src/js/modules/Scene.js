@@ -1,7 +1,7 @@
 import Constants from '../constants';
-import AnimationPlayer from './view/animation/_animation-player';
-import MovementAnimation from './view/animation/movement-animation';
-import ZoomAnimation from './view/animation/zoom-animation';
+import AnimationPlayer from './AnimationPlayer';
+import PanController from './PanController';
+import ZoomController from './ZoomController';
 import EventBus from './EventBus';
 import InstrumentPanel from './InstrumentPanel';
 
@@ -28,8 +28,8 @@ export default class Scene {
         this.timePanel = null;
 
         this.animationPlayer = null;
-        this.movementAnimation = new MovementAnimation(this);
-        this.zoomAnimation = new ZoomAnimation(this);
+        this.movementAnimation = new PanController(this);
+        this.zoomAnimation = new ZoomController(this);
         
         this.loaded = false;
 

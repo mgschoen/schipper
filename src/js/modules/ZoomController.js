@@ -1,8 +1,8 @@
-import Constants from '../../../constants';
+import Constants from '../constants';
 
 const { ANIMATION } = Constants;
 
-export default class ZoomAnimation {
+export default class ZoomController {
     constructor(target) {
         this.target = target;
         this.isZooming = false;

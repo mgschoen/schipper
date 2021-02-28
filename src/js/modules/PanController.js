@@ -1,7 +1,7 @@
-import EventBus from '../../EventBus';
-import { translateWithBearing } from '../../helpers';
+import EventBus from './EventBus';
+import { translateWithBearing } from './helpers';
 
-export default class MovementAnimation {
+export default class PanController {
     constructor(target) {
         this.target = target;
         this.running = false;

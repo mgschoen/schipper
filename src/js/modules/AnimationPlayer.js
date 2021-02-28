@@ -1,9 +1,9 @@
-import EventBus from '../../EventBus';
+import EventBus from './EventBus';
 
 import {
     getTransformStyles,
     setTransformStyles
-} from '../../helpers';
+} from './helpers';
 
 export default class AnimationPlayer {
     constructor(mapboxMap, markerElement) {
