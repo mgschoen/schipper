@@ -3,7 +3,7 @@ import SchipperEvents from '../../schipper-events';
 import {
     getTransformStyles,
     setTransformStyles
-} from '../../helpers/transform-style-helpers';
+} from '../../helpers';
 
 export default class AnimationPlayer {
     constructor(mapboxMap, markerElement) {

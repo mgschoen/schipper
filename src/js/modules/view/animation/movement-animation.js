@@ -1,5 +1,5 @@
 import SchipperEvents from '../../schipper-events';
-import { translateWithBearing } from '../../helpers/cartography-helpers';
+import { translateWithBearing } from '../../helpers';
 
 export default class MovementAnimation {
     constructor(target) {

@@ -1,3 +1,13 @@
+import lineArc from '@turf/line-arc';
+
+/* cartography */
+export function translateWithBearing (originX, originY, distance, bearing) {
+    let arc = lineArc([originX, originY], distance, 0, bearing);
+    let coords = arc.geometry.coordinates;
+    return coords.pop();
+}
+
+/* CSS transforms */
 function serializeTransformStyles (styleObject) {
     let serializedString = '';
     for (let style in styleObject) {
