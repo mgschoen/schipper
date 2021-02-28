@@ -1,7 +1,7 @@
 import distance from '@turf/distance';
-import SchipperEvents from './schipper-events';
+import EventBus from './EventBus';
 
-export default class SchipperMission {
+export default class Mission {
     constructor(destination, time, successCallback, expiredCallback) {
         this.destination = destination;
         this.destinationTolerance = 0.005;
@@ -19,8 +19,8 @@ export default class SchipperMission {
 
     init() {
         this.timeInterval = window.setInterval(this.boundTimeLoop, this.timeIntervalLength);
-        SchipperEvents.subscribe('POSITION_CHANGED', this.boundOnPositionChanged);
-        SchipperEvents.publish('MISSION_STARTED', {
+        EventBus.subscribe('POSITION_CHANGED', this.boundOnPositionChanged);
+        EventBus.publish('MISSION_STARTED', {
             destination: this.destination,
             current: this.timeCurrent,
             total: this.timeTotal
@@ -29,7 +29,7 @@ export default class SchipperMission {
 
     timeLoop() {
         this.timeCurrent += this.timeIntervalLength;
-        SchipperEvents.publish('MISSION_TIME_CHANGED', {
+        EventBus.publish('MISSION_TIME_CHANGED', {
             current: this.timeCurrent,
             total: this.timeTotal
         });
@@ -50,6 +50,6 @@ export default class SchipperMission {
     destroy() {
         window.clearInterval(this.timeInterval);
         this.timeInterval = null;
-        SchipperEvents.unsubscribe('POSITION_CHANGED', this.boundOnPositionChanged);
+        EventBus.unsubscribe('POSITION_CHANGED', this.boundOnPositionChanged);
     }
 }

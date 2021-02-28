@@ -1,4 +1,4 @@
-import SchipperEvents from '../../schipper-events';
+import EventBus from '../../EventBus';
 import { translateWithBearing } from '../../helpers';
 
 export default class MovementAnimation {
@@ -15,7 +15,7 @@ export default class MovementAnimation {
 
     init() {
         this.boundOnKeysChanged = data => this.onKeysChanged(data);
-        SchipperEvents.subscribe('KEYS_CHANGED', this.boundOnKeysChanged);
+        EventBus.subscribe('KEYS_CHANGED', this.boundOnKeysChanged);
     }
 
     onKeysChanged(data) {
@@ -95,6 +95,6 @@ export default class MovementAnimation {
     }
 
     destroy() {
-        SchipperEvents.unsubscribe('KEYS_CHANGED', this.boundOnKeysChanged);
+        EventBus.unsubscribe('KEYS_CHANGED', this.boundOnKeysChanged);
     }
 }

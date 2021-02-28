@@ -1,9 +1,9 @@
 import SchipperView from './view/schipper-view';
-import SchipperInputObserver from './schipper-input-observer';
+import InputObserver from './InputObserver';
 
 export default class Schipper {
     constructor(root, position) {
-        this.inputObserver = new SchipperInputObserver();
+        this.inputObserver = new InputObserver();
         this.initView(root, position);
     }
 

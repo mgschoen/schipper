@@ -1,6 +1,6 @@
-import SchipperEvents from './schipper-events';
+import EventBus from './EventBus';
 
-export default class SchipperInputObserver {
+export default class InputObserver {
     constructor() {
         this.directionStates = {
             left: false,
@@ -36,7 +36,7 @@ export default class SchipperInputObserver {
              }
         }
         if (directionStatesChanged) {
-            SchipperEvents.publish('KEYS_CHANGED', this.directionStates);
+            EventBus.publish('KEYS_CHANGED', this.directionStates);
         }
     }
 }

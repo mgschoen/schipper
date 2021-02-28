@@ -2,7 +2,7 @@ import Constants from '../../constants';
 import AnimationPlayer from './animation/_animation-player';
 import MovementAnimation from './animation/movement-animation';
 import ZoomAnimation from './animation/zoom-animation';
-import SchipperEvents from '../schipper-events';
+import EventBus from '../EventBus';
 import InstrumentPanel from '../InstrumentPanel';
 
 const { ANIMATION, MAP, UI_SETTINGS } = Constants;
@@ -39,7 +39,7 @@ export default class SchipperView {
     init() {
         this.map.on('load', this.onMapLoaded.bind(this));
         this.boundOnPositionChanged = coords => this.onPositionChanged(coords);
-        SchipperEvents.subscribe('POSITION_CHANGED', this.boundOnPositionChanged);
+        EventBus.subscribe('POSITION_CHANGED', this.boundOnPositionChanged);
     }
     
     onMapLoaded() {
@@ -51,10 +51,10 @@ export default class SchipperView {
 
         this.animationPlayer = new AnimationPlayer(this.map, this.marker);
         this.boundOnMissionStarted = (data) => this.onMissionStarted(data);
-        SchipperEvents.subscribe('MISSION_STARTED', this.boundOnMissionStarted);
+        EventBus.subscribe('MISSION_STARTED', this.boundOnMissionStarted);
 
         this.loaded = true;
-        SchipperEvents.publish('VIEW_LOADED', this);
+        EventBus.publish('VIEW_LOADED', this);
     }
 
     initUI(initialData) {
@@ -63,7 +63,7 @@ export default class SchipperView {
         this.root.insertAdjacentElement('afterend', this.timePanel.element);
 
         this.boundOnMissionTimeChanged = data => this.onMissionTimeChanged(data);
-        SchipperEvents.subscribe('MISSION_TIME_CHANGED', this.boundOnMissionTimeChanged);
+        EventBus.subscribe('MISSION_TIME_CHANGED', this.boundOnMissionTimeChanged);
     }
 
     onPositionChanged(coords) {
@@ -73,7 +73,7 @@ export default class SchipperView {
 
     onMissionStarted(data) {
         this.initUI(data);
-        SchipperEvents.unsubscribe('MISSION_STARTED', this.boundOnMissionStarted);
+        EventBus.unsubscribe('MISSION_STARTED', this.boundOnMissionStarted);
         this.boundOnMissionStarted = null;
     }
 
@@ -154,7 +154,7 @@ export default class SchipperView {
         this.movementAnimation.destroy();
         this.zoomAnimation.destroy();
         this.timePanel.destroy();
-        SchipperEvents.unsubscribe('POSITION_CHANGED', this.boundOnPositionChanged);
-        SchipperEvents.unsubscribe('MISSION_TIME_CHANGED', this.boundOnMissionTimeChanged);
+        EventBus.unsubscribe('POSITION_CHANGED', this.boundOnPositionChanged);
+        EventBus.unsubscribe('MISSION_TIME_CHANGED', this.boundOnMissionTimeChanged);
     }
 }

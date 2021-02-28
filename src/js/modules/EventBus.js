@@ -6,7 +6,7 @@ const _subscriptions = {
     VIEW_LOADED: []
 }
 
-const SchipperEvents = {
+const EventBus = {
     subscribe: function (eventName, callback) {
         _subscriptions[eventName].push(callback);
     },
@@ -21,5 +21,5 @@ const SchipperEvents = {
     }
 }
 
-Object.freeze(SchipperEvents);
-export default SchipperEvents;
+Object.freeze(EventBus);
+export default EventBus;

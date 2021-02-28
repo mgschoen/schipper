@@ -1,4 +1,4 @@
-import SchipperEvents from '../../schipper-events';
+import EventBus from '../../EventBus';
 
 import {
     getTransformStyles,
@@ -49,7 +49,7 @@ export default class AnimationPlayer {
 
     init() {
         this.boundOnPositionChanged = coords => this.onPositionChanged(coords);
-        SchipperEvents.subscribe('POSITION_CHANGED', this.boundOnPositionChanged);
+        EventBus.subscribe('POSITION_CHANGED', this.boundOnPositionChanged);
     }
 
     onPositionChanged(coords) {
@@ -69,7 +69,7 @@ export default class AnimationPlayer {
                 this._resetMovement();
                 this.moving = false;
             }
-            SchipperEvents.publish('POSITION_CHANGED', [calcPosition.x, calcPosition.y]);
+            EventBus.publish('POSITION_CHANGED', [calcPosition.x, calcPosition.y]);
         }
         if (this.zooming) {
             let calcZoom = this._calculateIntermediateZoom(now);
@@ -235,6 +235,6 @@ export default class AnimationPlayer {
     }
 
     destroy() {
-        SchipperEvents.unsubscribe('POSITION_CHANGED', this.boundOnPositionChanged);
+        EventBus.unsubscribe('POSITION_CHANGED', this.boundOnPositionChanged);
     }
 }
