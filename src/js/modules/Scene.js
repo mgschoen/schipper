@@ -1,9 +1,9 @@
-import Constants from '../../constants';
-import AnimationPlayer from './animation/_animation-player';
-import MovementAnimation from './animation/movement-animation';
-import ZoomAnimation from './animation/zoom-animation';
-import EventBus from '../EventBus';
-import InstrumentPanel from '../InstrumentPanel';
+import Constants from '../constants';
+import AnimationPlayer from './view/animation/_animation-player';
+import MovementAnimation from './view/animation/movement-animation';
+import ZoomAnimation from './view/animation/zoom-animation';
+import EventBus from './EventBus';
+import InstrumentPanel from './InstrumentPanel';
 
 const { ANIMATION, MAP, UI_SETTINGS } = Constants;
 const MAP_OPTIONS = {
@@ -13,7 +13,7 @@ const MAP_OPTIONS = {
     zoom: ANIMATION.initialZoom
 };
 
-export default class SchipperView {
+export default class Scene {
     constructor(root, position) {
         this.root = typeof root === 'string' 
             ? document.querySelector('#' + root)
