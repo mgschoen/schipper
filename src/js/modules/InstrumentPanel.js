@@ -5,7 +5,7 @@ const ALLOWED_POSITION = [
     'bottom-right'
 ];
 
-export default class UI {
+export default class InstrumentPanel {
     constructor(position, prototype) {
         if (ALLOWED_POSITION.indexOf(position) < 0) {
             console.warn(`"${position}" is not a valid position for UI components`);

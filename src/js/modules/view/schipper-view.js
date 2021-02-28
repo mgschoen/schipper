@@ -3,7 +3,7 @@ import AnimationPlayer from './animation/_animation-player';
 import MovementAnimation from './animation/movement-animation';
 import ZoomAnimation from './animation/zoom-animation';
 import SchipperEvents from '../schipper-events';
-import UI from './ui/ui';
+import InstrumentPanel from '../InstrumentPanel';
 
 const { ANIMATION, MAP, UI_SETTINGS } = Constants;
 const MAP_OPTIONS = {
@@ -25,7 +25,7 @@ export default class SchipperView {
             ...MAP_OPTIONS
         });
         this.marker = null;
-        this.uiTime = null;
+        this.timePanel = null;
 
         this.animationPlayer = null;
         this.movementAnimation = new MovementAnimation(this);
@@ -58,9 +58,9 @@ export default class SchipperView {
     }
 
     initUI(initialData) {
-        this.uiTime = new UI('bottom-right', UI_SETTINGS.prototypes.time);
-        this.uiTime.update(this.formatTimeData(initialData));
-        this.root.insertAdjacentElement('afterend', this.uiTime.element);
+        this.timePanel = new InstrumentPanel('bottom-right', UI_SETTINGS.prototypes.time);
+        this.timePanel.update(this.formatTimeData(initialData));
+        this.root.insertAdjacentElement('afterend', this.timePanel.element);
 
         this.boundOnMissionTimeChanged = data => this.onMissionTimeChanged(data);
         SchipperEvents.subscribe('MISSION_TIME_CHANGED', this.boundOnMissionTimeChanged);
@@ -79,7 +79,7 @@ export default class SchipperView {
 
     onMissionTimeChanged(data) {
         let formattedData = this.formatTimeData(data);
-        this.uiTime.update(formattedData);
+        this.timePanel.update(formattedData);
     }
 
     formatTimeData(data) {
@@ -153,7 +153,7 @@ export default class SchipperView {
         this.animationPlayer.destroy();
         this.movementAnimation.destroy();
         this.zoomAnimation.destroy();
-        this.uiTime.destroy();
+        this.timePanel.destroy();
         SchipperEvents.unsubscribe('POSITION_CHANGED', this.boundOnPositionChanged);
         SchipperEvents.unsubscribe('MISSION_TIME_CHANGED', this.boundOnMissionTimeChanged);
     }
