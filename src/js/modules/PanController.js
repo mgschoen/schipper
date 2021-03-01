@@ -61,7 +61,7 @@ export default class PanController {
                 this.movementStepSize,
                 movementDirection
             );
-            if (this.target.onWater(nextPosition[0], nextPosition[1])) {
+            if (this.target.isOnWater(nextPosition[0], nextPosition[1])) {
                 this.target.moveTo(nextPosition[0], nextPosition[1]);
             }
         }

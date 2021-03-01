@@ -59,13 +59,6 @@ export default class Scene {
         EventBus.publish('VIEW_LOADED', this);
     }
 
-    initUI(initialData) {
-        this.timePanel = new InstrumentPanel('bottom-right', UI_SETTINGS.prototypes.time);
-        this.timePanel.update(this.formatTimeData(initialData));
-        this.root.insertAdjacentElement('afterend', this.timePanel.element);
-        EventBus.subscribe('MISSION_TIME_CHANGED', this.boundOnMissionTimeChanged);
-    }
-
     onPositionChanged(coords) {
         this.center[0] = coords[0] || this.center[0];
         this.center[1] = coords[1] || this.center[1];
@@ -80,6 +73,13 @@ export default class Scene {
     onMissionTimeChanged(data) {
         let formattedData = this.formatTimeData(data);
         this.timePanel.update(formattedData);
+    }
+
+    initUI(initialData) {
+        this.timePanel = new InstrumentPanel('bottom-right', UI_SETTINGS.prototypes.time);
+        this.timePanel.update(this.formatTimeData(initialData));
+        this.root.insertAdjacentElement('afterend', this.timePanel.element);
+        EventBus.subscribe('MISSION_TIME_CHANGED', this.boundOnMissionTimeChanged);
     }
 
     formatTimeData(data) {
@@ -98,28 +98,6 @@ export default class Scene {
             return;
         }
         this.animationPlayer.moveTo(x, y);
-    }
-
-    onWater(lat, lon) {
-        let viewportWidth = this.map._container.offsetWidth;
-        let viewportHeight = this.map._container.offsetHeight;
-        let viewportPosition = this.map.project([lat,lon]);
-        if (viewportPosition.x < 0 || viewportPosition.x > viewportWidth ||
-            viewportPosition.y < 0 || viewportPosition.y > viewportHeight) {
-                throw new RangeError('Cannot check onWater status if location is out of viewport');
-        }
-        let waterPolygons = this.map.queryRenderedFeatures(viewportPosition, {
-            layers: [MAP.waterLayerName]
-        });
-        return waterPolygons.length > 0;
-    }
-
-    numLandFeatures() {
-        let renderedFeatures = this.map.queryRenderedFeatures();
-        let nonWaterFeatures = renderedFeatures.filter(feature => {
-            return feature.sourceLayer !== MAP.waterLayerName;
-        });
-        return nonWaterFeatures.length;
     }
 
     zoomOut() {
@@ -145,6 +123,28 @@ export default class Scene {
             return;
         }
         this.animationPlayer.rotateMarkerTo(degree);
+    }
+
+    isOnWater(lat, lon) {
+        let viewportWidth = this.map._container.offsetWidth;
+        let viewportHeight = this.map._container.offsetHeight;
+        let viewportPosition = this.map.project([lat,lon]);
+        if (viewportPosition.x < 0 || viewportPosition.x > viewportWidth ||
+            viewportPosition.y < 0 || viewportPosition.y > viewportHeight) {
+                throw new RangeError('Cannot check onWater status if location is out of viewport');
+        }
+        let waterPolygons = this.map.queryRenderedFeatures(viewportPosition, {
+            layers: [MAP.waterLayerName]
+        });
+        return waterPolygons.length > 0;
+    }
+
+    get numLandFeatures() {
+        let renderedFeatures = this.map.queryRenderedFeatures();
+        let nonWaterFeatures = renderedFeatures.filter(feature => {
+            return feature.sourceLayer !== MAP.waterLayerName;
+        });
+        return nonWaterFeatures.length;
     }
 
     destroy() {

@@ -18,7 +18,7 @@ export default class ZoomController {
         if (!this.active) {
             return;
         }
-        let numVisibleLandFeatures = this.target.numLandFeatures();
+        let numVisibleLandFeatures = this.target.numLandFeatures;
         let performingZoom = false;
         if (numVisibleLandFeatures < ANIMATION.zoomFeatureThresholdMin 
             && !this.isZooming) {
