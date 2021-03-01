@@ -33,12 +33,15 @@ export default class Scene {
         
         this.loaded = false;
 
+        this.boundOnPositionChanged = (coords) => this.onPositionChanged(coords);
+        this.boundOnMissionStarted = (data) => this.onMissionStarted(data);
+        this.boundOnMissionTimeChanged = (data) => this.onMissionTimeChanged(data);
+
         this.init();
     }
 
     init() {
-        this.map.on('load', this.onMapLoaded.bind(this));
-        this.boundOnPositionChanged = coords => this.onPositionChanged(coords);
+        this.map.on('load', () => this.onMapLoaded());
         EventBus.subscribe('POSITION_CHANGED', this.boundOnPositionChanged);
     }
     
@@ -50,7 +53,6 @@ export default class Scene {
         this.marker = marker;
 
         this.animationPlayer = new AnimationPlayer(this.map, this.marker);
-        this.boundOnMissionStarted = (data) => this.onMissionStarted(data);
         EventBus.subscribe('MISSION_STARTED', this.boundOnMissionStarted);
 
         this.loaded = true;
@@ -61,8 +63,6 @@ export default class Scene {
         this.timePanel = new InstrumentPanel('bottom-right', UI_SETTINGS.prototypes.time);
         this.timePanel.update(this.formatTimeData(initialData));
         this.root.insertAdjacentElement('afterend', this.timePanel.element);
-
-        this.boundOnMissionTimeChanged = data => this.onMissionTimeChanged(data);
         EventBus.subscribe('MISSION_TIME_CHANGED', this.boundOnMissionTimeChanged);
     }
 

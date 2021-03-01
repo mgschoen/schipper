@@ -11,7 +11,7 @@ export default class ZoomController {
     }
 
     init() {
-        window.requestAnimationFrame(this.loop.bind(this));
+        window.requestAnimationFrame(() => this.loop());
     }
 
     loop() {
@@ -34,7 +34,7 @@ export default class ZoomController {
             this.isZooming = true;
             setTimeout(_ => this.isZooming = false, ANIMATION.zoomDuration);
         }
-        window.requestAnimationFrame(this.loop.bind(this));
+        window.requestAnimationFrame(() => this.loop());
     }
 
     destroy() {

@@ -11,14 +11,13 @@ export default class Mission {
         this.successCallback = successCallback;
         this.expiredCallback = expiredCallback;
 
-        this.boundTimeLoop = () => this.timeLoop();
         this.boundOnPositionChanged = (data) => this.onPositionChanged(data);
 
         this.init();
     }
 
     init() {
-        this.timeInterval = window.setInterval(this.boundTimeLoop, this.timeIntervalLength);
+        this.timeInterval = window.setInterval(() => this.timeLoop(), this.timeIntervalLength);
         EventBus.subscribe('POSITION_CHANGED', this.boundOnPositionChanged);
         EventBus.publish('MISSION_STARTED', {
             destination: this.destination,

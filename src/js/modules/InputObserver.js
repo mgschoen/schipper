@@ -8,8 +8,8 @@ export default class InputObserver {
             right: false,
             down: false
         };
-        window.addEventListener('keydown', this.listener.bind(this));
-        window.addEventListener('keyup', this.listener.bind(this));
+        window.addEventListener('keydown', (event) => this.listener(event));
+        window.addEventListener('keyup', (event) => this.listener(event));
     }
 
     listener(event) {

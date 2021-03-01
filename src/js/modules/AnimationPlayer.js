@@ -44,11 +44,7 @@ export default class AnimationPlayer {
         this._zoomDuration = null;
         this._markerRotationDuration = null;
 
-        this.init();
-    }
-
-    init() {
-        this.boundOnPositionChanged = coords => this.onPositionChanged(coords);
+        this.boundOnPositionChanged = (coords) => this.onPositionChanged(coords);
         EventBus.subscribe('POSITION_CHANGED', this.boundOnPositionChanged);
     }
 
@@ -92,7 +88,7 @@ export default class AnimationPlayer {
         }
         this.animating = this.moving || this.zooming || this.rotatingMarker;
         if (this.animating) {
-            window.requestAnimationFrame(this._animationStep.bind(this));
+            window.requestAnimationFrame(() => this._animationStep());
         }
     }
 
@@ -183,7 +179,7 @@ export default class AnimationPlayer {
         this._doneMovingAt = new Date().getTime() + this._moveDuration;
         this.moving = true;
         if (!this.animating) {
-            window.requestAnimationFrame(this._animationStep.bind(this));
+            window.requestAnimationFrame(() => this._animationStep());
             this.animating = true;
         }
     }
@@ -199,7 +195,7 @@ export default class AnimationPlayer {
         this._doneZoomingAt = new Date().getTime() + this._zoomDuration;
         this.zooming = true;
         if (!this.animating) {
-            window.requestAnimationFrame(this._animationStep.bind(this));
+            window.requestAnimationFrame(() => this._animationStep());
             this.animating = true;
         }
     }
@@ -229,7 +225,7 @@ export default class AnimationPlayer {
         this._doneRotatingMarkerAt = new Date().getTime() + this._markerRotationDuration;
         this.rotatingMarker = true;
         if (!this.animating) {
-            window.requestAnimationFrame(this._animationStep.bind(this));
+            window.requestAnimationFrame(() => this._animationStep());
             this.animating = true;
         }
     }

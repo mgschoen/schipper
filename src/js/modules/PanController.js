@@ -14,7 +14,7 @@ export default class PanController {
     }
 
     init() {
-        this.boundOnKeysChanged = data => this.onKeysChanged(data);
+        this.boundOnKeysChanged = (data) => this.onKeysChanged(data);
         EventBus.subscribe('KEYS_CHANGED', this.boundOnKeysChanged);
     }
 
@@ -66,7 +66,7 @@ export default class PanController {
             }
         }
         if (this.running) {
-            window.requestAnimationFrame(this.loop.bind(this));
+            window.requestAnimationFrame(() => this.loop());
         }
     }
 
