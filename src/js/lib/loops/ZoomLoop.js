@@ -1,23 +1,17 @@
-import Constants from '../constants';
+import AbstractLoop from './AbstractLoop';
+import Constants from '../../constants';
 
 const { ANIMATION } = Constants;
 
-export default class ZoomController {
+export default class ZoomLoop extends AbstractLoop {
     constructor(target) {
+        super();
         this.target = target;
         this.isZooming = false;
         this.active = true;
-        this.init();
     }
 
-    init() {
-        window.requestAnimationFrame(() => this.loop());
-    }
-
-    loop() {
-        if (!this.active) {
-            return;
-        }
+    _loopImplementation() {
         let numVisibleLandFeatures = this.target.numLandFeatures;
         let performingZoom = false;
         if (numVisibleLandFeatures < ANIMATION.zoomFeatureThresholdMin 
@@ -32,9 +26,8 @@ export default class ZoomController {
         }
         if (performingZoom) {
             this.isZooming = true;
-            setTimeout(_ => this.isZooming = false, ANIMATION.zoomDuration);
+            setTimeout(() => this.isZooming = false, ANIMATION.zoomDuration);
         }
-        window.requestAnimationFrame(() => this.loop());
     }
 
     destroy() {

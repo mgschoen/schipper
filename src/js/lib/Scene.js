@@ -1,7 +1,5 @@
 import Constants from '../constants';
 import AnimationPlayer from './AnimationPlayer';
-import PanController from './PanController';
-import ZoomController from './ZoomController';
 import EventBus from './EventBus';
 import InstrumentPanel from './InstrumentPanel';
 
@@ -26,11 +24,7 @@ export default class Scene {
         });
         this.marker = null;
         this.timePanel = null;
-
         this.animationPlayer = null;
-        this.movementAnimation = new PanController(this);
-        this.zoomAnimation = new ZoomController(this);
-        
         this.loaded = false;
 
         this.boundOnPositionChanged = (coords) => this.onPositionChanged(coords);

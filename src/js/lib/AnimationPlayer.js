@@ -3,7 +3,7 @@ import EventBus from './EventBus';
 import {
     getTransformStyles,
     setTransformStyles
-} from './helpers';
+} from './Helpers';
 
 export default class AnimationPlayer {
     constructor(mapboxMap, markerElement) {

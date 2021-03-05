@@ -1,19 +1,16 @@
-import EventBus from './EventBus';
-import { translateWithBearing } from './helpers';
+import AbstractLoop from './AbstractLoop';
+import EventBus from '../EventBus';
+import { translateWithBearing } from '../Helpers';
 
-export default class PanController {
+export default class PanLoop extends AbstractLoop {
     constructor(target) {
+        super();
         this.target = target;
-        this.running = false;
         this.activeKeys = [];
         this.movementStepSize = 0.001;
         this.rotationStepSize = 1;
         this.direction = 0;         // direction in degrees, north = 0, south = 180
 
-        this.init();
-    }
-
-    init() {
         this.boundOnKeysChanged = (data) => this.onKeysChanged(data);
         EventBus.subscribe('KEYS_CHANGED', this.boundOnKeysChanged);
     }
@@ -21,16 +18,16 @@ export default class PanController {
     onKeysChanged(data) {
         let activeKeys = Object.keys(data).filter(key => data[key]);
         if (activeKeys.length) {
-            this.setKeys(activeKeys);
-            if (!this.running) {
-                this.start();
+            this.activeKeys = activeKeys;
+            if (!this.active) {
+                this.active = true;
             }
         } else {
-            this.stop();
+            this.active = false;
         }
     }
 
-    loop() {
+    _loopImplementation() {
         let currentPosition = this.target.center;
         let acceleration = 0;
         let steering = 0;
@@ -65,9 +62,6 @@ export default class PanController {
                 this.target.moveTo(nextPosition[0], nextPosition[1]);
             }
         }
-        if (this.running) {
-            window.requestAnimationFrame(() => this.loop());
-        }
     }
 
     changeDirection(degree) {
@@ -81,20 +75,8 @@ export default class PanController {
         this.direction = nextRotation;
     }
 
-    start() {
-        this.running = true;
-        this.loop();
-    }
-
-    setKeys(keys) {
-        this.activeKeys = keys;
-    }
-
-    stop() {
-        this.running = false;
-    }
-
     destroy() {
+        this.stop();
         EventBus.unsubscribe('KEYS_CHANGED', this.boundOnKeysChanged);
     }
 }
