@@ -2,6 +2,7 @@ import Constants from '../constants';
 import AnimationPlayer from './AnimationPlayer';
 import EventBus from './EventBus';
 import InstrumentPanel from './InstrumentPanel';
+import Store from './Store';
 
 const { ANIMATION, MAP, UI_SETTINGS } = Constants;
 const MAP_OPTIONS = {
@@ -12,14 +13,13 @@ const MAP_OPTIONS = {
 };
 
 export default class Scene {
-    constructor(root, position) {
+    constructor(root) {
         this.root = typeof root === 'string' 
             ? document.querySelector('#' + root)
             : root;
-        this.center = position;
         this.map = new mapboxgl.Map({
             container: root,
-            center: this.center,
+            center: [Store.getItem('mapX'), Store.getItem('mapY')],
             ...MAP_OPTIONS
         });
         this.marker = null;
@@ -27,16 +27,10 @@ export default class Scene {
         this.animationPlayer = null;
         this.loaded = false;
 
-        this.boundOnPositionChanged = (coords) => this.onPositionChanged(coords);
         this.boundOnMissionStarted = (data) => this.onMissionStarted(data);
         this.boundOnMissionTimeChanged = (data) => this.onMissionTimeChanged(data);
 
-        this.init();
-    }
-
-    init() {
         this.map.on('load', () => this.onMapLoaded());
-        EventBus.subscribe('POSITION_CHANGED', this.boundOnPositionChanged);
     }
     
     onMapLoaded() {
@@ -51,11 +45,6 @@ export default class Scene {
 
         this.loaded = true;
         EventBus.publish('VIEW_LOADED', this);
-    }
-
-    onPositionChanged(coords) {
-        this.center[0] = coords[0] || this.center[0];
-        this.center[1] = coords[1] || this.center[1];
     }
 
     onMissionStarted(data) {
@@ -119,6 +108,12 @@ export default class Scene {
         this.animationPlayer.rotateMarkerTo(degree);
     }
 
+    adMarkerToMap(lnglat) {
+        new mapboxgl.Marker()
+            .setLngLat(lnglat)
+            .addTo(this.map);
+    }
+
     isOnWater(lat, lon) {
         let viewportWidth = this.map._container.offsetWidth;
         let viewportHeight = this.map._container.offsetHeight;
@@ -148,7 +143,6 @@ export default class Scene {
         this.movementAnimation.destroy();
         this.zoomAnimation.destroy();
         this.timePanel.destroy();
-        EventBus.unsubscribe('POSITION_CHANGED', this.boundOnPositionChanged);
         EventBus.unsubscribe('MISSION_TIME_CHANGED', this.boundOnMissionTimeChanged);
     }
 }
