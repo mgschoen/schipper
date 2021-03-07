@@ -2,7 +2,6 @@ const _subscriptions = {
     MISSION_STARTED: [],
     MISSION_TIME_CHANGED: [],
     KEYS_CHANGED: [],
-    POSITION_CHANGED: [],
     VIEW_LOADED: []
 }
 
