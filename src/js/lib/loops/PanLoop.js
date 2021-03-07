@@ -1,7 +1,6 @@
 import AbstractLoop from './AbstractLoop';
-import EventBus from '../EventBus';
-import { translateWithBearing } from '../Helpers';
 import Store from '../Store';
+import { translateWithBearing } from '../Helpers';
 
 export default class PanLoop extends AbstractLoop {
     constructor(target) {
@@ -13,7 +12,7 @@ export default class PanLoop extends AbstractLoop {
         this.direction = 0;         // direction in degrees, north = 0, south = 180
 
         this.boundOnKeysChanged = (data) => this.onKeysChanged(data);
-        EventBus.subscribe('KEYS_CHANGED', this.boundOnKeysChanged);
+        Store.subscribe('activeKeys', this.boundOnKeysChanged);
     }
 
     onKeysChanged(data) {
@@ -78,6 +77,6 @@ export default class PanLoop extends AbstractLoop {
 
     destroy() {
         this.stop();
-        EventBus.unsubscribe('KEYS_CHANGED', this.boundOnKeysChanged);
+        Store.unsubscribe('activeKeys', this.boundOnKeysChanged);
     }
 }

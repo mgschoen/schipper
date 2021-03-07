@@ -13,7 +13,10 @@ const FIELDS = {
     missionDestinationY: 'number',
     missionTimeTotal: 'number',
     missionTimeCurrent: 'number',
-    missionState: ['pending', 'active', 'success', 'expired']
+    missionState: ['pending', 'active', 'success', 'expired'],
+
+    // input
+    activeKeys: 'object',
 }
 
 const privateData = {};

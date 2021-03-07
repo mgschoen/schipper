@@ -1,19 +1,21 @@
 import EventBus from './EventBus';
+import Store from './Store';
 
 export default class InputObserver {
     constructor() {
-        this.directionStates = {
+        Store.setItem('activeKeys', {
             left: false,
             up: false,
             right: false,
             down: false
-        };
+        });
         window.addEventListener('keydown', (event) => this.listener(event));
         window.addEventListener('keyup', (event) => this.listener(event));
     }
 
     listener(event) {
-        let oldDirectionStates = Object.assign({}, this.directionStates);
+        let oldActiveKeys = Object.assign({}, Store.getItem('activeKeys'));
+        let newActiveKeys = Object.assign({}, oldActiveKeys);
         let direction;
         switch(event.keyCode) {
             case 37:
@@ -27,16 +29,16 @@ export default class InputObserver {
             default:
         }
         if (direction) {
-            this.directionStates[direction] = event.type === 'keydown' ? true : false;
+            newActiveKeys[direction] = event.type === 'keydown' ? true : false;
         }
         let directionStatesChanged = false;
-        for (let dir in this.directionStates) {
-             if (this.directionStates[dir] !== oldDirectionStates[dir]) {
+        for (let dir in newActiveKeys) {
+             if (newActiveKeys[dir] !== oldActiveKeys[dir]) {
                  directionStatesChanged = true;
              }
         }
         if (directionStatesChanged) {
-            EventBus.publish('KEYS_CHANGED', this.directionStates);
+            Store.setItem('activeKeys', newActiveKeys);
         }
     }
 }
