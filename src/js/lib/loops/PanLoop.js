@@ -1,6 +1,7 @@
 import AbstractLoop from './AbstractLoop';
 import EventBus from '../EventBus';
 import { translateWithBearing } from '../Helpers';
+import Store from '../Store';
 
 export default class PanLoop extends AbstractLoop {
     constructor(target) {
@@ -28,7 +29,7 @@ export default class PanLoop extends AbstractLoop {
     }
 
     _loopImplementation() {
-        let currentPosition = this.target.center;
+        let currentPosition = [Store.getItem('mapX'), Store.getItem('mapY')];
         let acceleration = 0;
         let steering = 0;
         

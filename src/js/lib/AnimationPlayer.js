@@ -1,4 +1,5 @@
 import EventBus from './EventBus';
+import Store from './Store';
 
 import {
     getTransformStyles,
@@ -17,8 +18,8 @@ export default class AnimationPlayer {
         this._markerScalingFactor = 1 / this._map.transform.scale;
 
         // where we are
-        this._x = this._map.getCenter().lng;
-        this._y = this._map.getCenter().lat;
+        this._x = Store.getItem('mapX');
+        this._y = Store.getItem('mapY');;
         this._zoom = this._map.getZoom();
         this._markerRotation = parseFloat(getTransformStyles(this._marker).rotate) || 0;
 
@@ -44,13 +45,14 @@ export default class AnimationPlayer {
         this._zoomDuration = null;
         this._markerRotationDuration = null;
 
-        this.boundOnPositionChanged = (coords) => this.onPositionChanged(coords);
-        EventBus.subscribe('POSITION_CHANGED', this.boundOnPositionChanged);
+        this.boundOnPositionChanged = () => this.onPositionChanged();
+        Store.subscribe('mapX', this.boundOnPositionChanged);
+        Store.subscribe('mapY', this.boundOnPositionChanged);
     }
 
-    onPositionChanged(coords) {
-        this._x = coords[0] || this._x;
-        this._y = coords[1] || this._y;
+    onPositionChanged() {
+        this._x = Store.getItem('mapX');
+        this._y = Store.getItem('mapY');
     }
 
     _animationStep() {
@@ -65,7 +67,8 @@ export default class AnimationPlayer {
                 this._resetMovement();
                 this.moving = false;
             }
-            EventBus.publish('POSITION_CHANGED', [calcPosition.x, calcPosition.y]);
+            Store.setItem('mapX', calcPosition.x);
+            Store.setItem('mapY', calcPosition.y);
         }
         if (this.zooming) {
             let calcZoom = this._calculateIntermediateZoom(now);
@@ -231,6 +234,7 @@ export default class AnimationPlayer {
     }
 
     destroy() {
-        EventBus.unsubscribe('POSITION_CHANGED', this.boundOnPositionChanged);
+        Store.unsubscribe('mapX', this.boundOnPositionChanged);
+        Store.unsubscribe('mapY', this.boundOnPositionChanged);
     }
 }
