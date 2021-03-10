@@ -1,8 +1,7 @@
-import AbstractLoop from './loops/AbstractLoop';
-import PanLoop from './loops/PanLoop';
-import ZoomLoop from './loops/ZoomLoop';
+import AbstractLoop from './_AbstractLoop';
+import { PanLoop, ZoomLoop } from '.';
 
-export default class BaseLoop extends AbstractLoop {
+export default class MainLoop extends AbstractLoop {
     constructor(scene) {
         super();
         this.loops = [

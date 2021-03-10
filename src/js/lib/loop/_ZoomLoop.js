@@ -1,4 +1,4 @@
-import AbstractLoop from './AbstractLoop';
+import AbstractLoop from './_AbstractLoop';
 import Constants from '../../constants';
 
 const { ANIMATION } = Constants;

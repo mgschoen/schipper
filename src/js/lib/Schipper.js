@@ -1,6 +1,6 @@
 import Scene from './Scene';
 import InputObserver from './InputObserver';
-import BaseLoop from './BaseLoop';
+import MainLoop from './loop';
 import Mission from './Mission';
 import Store from './Store';
 
@@ -11,10 +11,10 @@ export default class Schipper {
 
         this.inputObserver = new InputObserver();
         this.scene = new Scene(root);
-        this.baseLoop = new BaseLoop(this.scene);
+        this.mainLoop = new MainLoop(this.scene);
         this.activeMission = null;
 
-        this.baseLoop.start();
+        this.mainLoop.start();
     }
 
     onMissionSuccess() {

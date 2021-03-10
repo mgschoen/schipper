@@ -1,4 +1,4 @@
-import AbstractLoop from './AbstractLoop';
+import AbstractLoop from './_AbstractLoop';
 import Store from '../Store';
 import { translateWithBearing } from '../Helpers';
 
