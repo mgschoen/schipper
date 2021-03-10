@@ -1,75 +1,68 @@
-/* Frame style inspired by https://codepen.io/chris22smith/pen/PbBwjp */
+/* color palette: https://coolors.co/214159-d1e5f0-facc75-758e4f-fbcbb2 */
 
-$frame-width: 18px;
-$frame-ornament-inner-distance: 7px;
-$frame-ornament-width: 3px;
-
-$frame-color: #99520c;
-$frame-color-light: #a35d12;
-$frame-color-shade: #80480c;
-$frame-color-content: rgba(237, 231, 231, .9);
-$frame-color-shadow: rgba(0,0,0,.25);
-
-$frame-border-radius: 2px;
-
-@mixin frame-ornament($distance, $inset: false) {
-    border-radius: $frame-border-radius;
-    bottom: -$distance;
-    @if $inset { box-shadow: 0 2px 5px 0 $frame-color-shadow inset; } 
-    @else { box-shadow: 0 2px 5px 0 $frame-color-shadow; }
-    content: "";
-    left: -$distance;
-    position: absolute;
-    right: -$distance;
-    top: -$distance;
-}
+$color-indigo: rgba(33, 65, 89, 1);
+$color-indigo-light: rgba(39, 76, 104, 1);
+$color-beau: rgba(209, 229, 240, 1);
+$color-crayola: rgba(250, 204, 117, 1);
+$color-moss: rgba(117, 142, 79, 1);
+$color-apricot: rgba(251, 203, 178, 1);
 
 .ui {
-    background-color: $frame-color-content;
-    border: solid $frame-width $frame-color;
-    border-bottom-color: $frame-color-light;
-    border-radius: $frame-border-radius;
-    border-top-color: $frame-color-shade;
-    box-shadow: 
-        0 0 5px 0 $frame-color-shadow inset,
-        0 5px 10px 5px $frame-color-shadow;
+    border-width: 3px;
+    border-style: solid;
+    border-radius: 10px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                0 4px 6px -2px rgba(0, 0, 0, 0.05);
     box-sizing: border-box;
     display: inline-block;
     padding: 15px;
-    position: fixed;
     text-align: center;
+    z-index: 10;
 
-    &:before {
-        @include frame-ornament($frame-ornament-inner-distance, true);
+    &--primary {
+        color: $color-beau;
+        background: $color-indigo;
+        background: linear-gradient(319deg, $color-indigo 0%, $color-indigo-light 100%);
+        border: 0;
+
+        h1, h2 {
+            color: $color-crayola;
+            background: linear-gradient(319deg, $color-apricot 0%, $color-crayola 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
     }
 
-    &:after {
-        @include frame-ornament(
-            $frame-ornament-inner-distance + $frame-ornament-width
-        );
+    &--secondary {
+        color: $color-indigo;
+        background: $color-apricot;
+        background: linear-gradient(319deg, $color-apricot 0%, $color-crayola 100%);
+        border-color: $color-indigo;
     }
 
-    &--top-left {
-        left: 20px;
-        top: 20px;
+    &--plain {
+        border: 0;
+        box-shadow: none;
+        color: $color-indigo;
     }
 
-    &--top-right {
-        right: 20px;
-        top: 20px;
-    }
-
-    &--bottom-left {
-        bottom: 20px;
-        left: 20px;
-    }
-
-    &--bottom-right {
-        bottom: 20px;
-        right: 20px;
+    &--unpadded {
+        padding: 0;
     }
 
     h1, h2 {
         font-size: 36px;
+        margin: 0;
+    }
+
+    &__menuButton {
+        background: none;
+        border: none;
+        color :$color-indigo;
+        cursor: pointer;
+        margin-right: 10px;
+        padding: 5px;
+        width: 34px;
     }
 }
