@@ -3,6 +3,7 @@ import InputObserver from './InputObserver';
 import MainLoop from './loop';
 import Mission from './Mission';
 import Store from './Store';
+import createComponentLoader from './ui-components';
 
 export default class Schipper {
     constructor(root, position) {
@@ -12,6 +13,7 @@ export default class Schipper {
         this.inputObserver = new InputObserver();
         this.scene = new Scene(root);
         this.mainLoop = new MainLoop(this.scene);
+        this.components = createComponentLoader();
         this.activeMission = null;
 
         this.mainLoop.start();
