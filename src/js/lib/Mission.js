@@ -1,11 +1,11 @@
 import distance from '@turf/distance';
-import EventBus from './EventBus';
-import Store from './Store';
+import Store, { useStore } from './store';
 
 export default class Mission {
-    constructor(destination, timeInMs) {
+    constructor(destination, timeInMs, options) {
         this.destination = destination;
         this.destinationTolerance = 0.005;
+        this.shortDescription = options.shortDescription || '';
         this.timeTotal = timeInMs;
         this.timeCurrent = 0;
         this.timeIntervalLength = 1000;
@@ -15,29 +15,31 @@ export default class Mission {
 
         this.boundOnPositionChanged = () => this.onPositionChanged();
 
-        this.init();
+        this.timeInterval = window.setInterval(() => this.intervalTick(), this.timeIntervalLength);
+        this.positionSubscription = useStore([
+            'mapX',
+            'mapY'
+        ], this, () => this.onPositionChanged());
+        Store.setItem('missionDestinationX', this.destination[0]);
+        Store.setItem('missionDestinationY', this.destination[1]);
+        Store.setItem('missionTimeTotal', timeInMs);
+        Store.setItem('missionTimeCurrent', 0);
+        Store.setItem('missionDescription', this.shortDescription);
+        Store.setItem('missionIsActive', true);
     }
 
-    init() {
-        this.timeInterval = window.setInterval(() => this.timeLoop(), this.timeIntervalLength);
-        Store.subscribe('mapX', this.boundOnPositionChanged);
-        Store.subscribe('mapY', this.boundOnPositionChanged);
-        EventBus.publish('MISSION_STARTED', {
-            destination: this.destination,
-            current: this.timeCurrent,
-            total: this.timeTotal
-        });
-    }
+    intervalTick() {
+        const timeTotal = Store.getItem('missionTimeTotal');
+        const timeCurrentBefore = Store.getItem('missionTimeCurrent')
+        Store.setItem('missionTimeCurrent', timeCurrentBefore + this.timeIntervalLength);
+        const timeCurrentAfter = Store.getItem('missionTimeCurrent');
 
-    timeLoop() {
-        this.timeCurrent += this.timeIntervalLength;
-        const data = {
-            current: this.timeCurrent,
-            total: this.timeTotal
-        };
-        EventBus.publish('MISSION_TIME_CHANGED', data);
-        this.tickCallbacks.forEach(callback => callback(data));
-        if (this.timeCurrent >= this.timeTotal) {
+        this.tickCallbacks.forEach(callback => callback({
+            current: timeCurrentAfter,
+            total: timeTotal
+        }));
+
+        if (timeCurrentAfter >= timeTotal) {
             this.onExpired();
             this.destroy();
         }
@@ -95,10 +97,10 @@ export default class Mission {
     destroy() {
         window.clearInterval(this.timeInterval);
         this.timeInterval = null;
-        Store.unsubscribe('mapX', this.boundOnPositionChanged);
-        Store.unsubscribe('mapY', this.boundOnPositionChanged);
+        this.positionSubscription.destroy();
         this.successCallbacks = [];
         this.expiredCallbacks = [];
         this.tickCallbacks = [];
+        Store.setItem('missionIsActive', false);
     }
 }

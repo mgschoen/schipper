@@ -1,5 +1,5 @@
 import EventBus from './EventBus';
-import Store from './Store';
+import Store from './store';
 
 export default class InputObserver {
     constructor() {

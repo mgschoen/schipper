@@ -1,8 +1,7 @@
 import Constants from '../constants';
 import AnimationPlayer from './AnimationPlayer';
 import EventBus from './EventBus';
-import InstrumentPanel from './InstrumentPanel';
-import Store from './Store';
+import Store from './store';
 
 const { ANIMATION, MAP, UI_SETTINGS } = Constants;
 const MAP_OPTIONS = {
@@ -27,53 +26,36 @@ export default class Scene {
         this.animationPlayer = null;
         this.loaded = false;
 
-        this.boundOnMissionStarted = (data) => this.onMissionStarted(data);
-        this.boundOnMissionTimeChanged = (data) => this.onMissionTimeChanged(data);
+        this.boundOnMissionActiveChanged = (data) => this.onMissionActiveChanged(data);
 
         this.map.on('load', () => this.onMapLoaded());
     }
     
     onMapLoaded() {
-        // init marker
         var marker = document.createElement('figure');
         marker.className = 'pc';
         this.root.insertAdjacentElement('afterend', marker);
         this.marker = marker;
 
         this.animationPlayer = new AnimationPlayer(this.map, this.marker);
-        EventBus.subscribe('MISSION_STARTED', this.boundOnMissionStarted);
+        Store.subscribe('missionIsActive', this.boundOnMissionActiveChanged);
 
+        // done loading
         this.loaded = true;
         EventBus.publish('VIEW_LOADED', this);
     }
 
-    onMissionStarted(data) {
-        this.initUI(data);
-        EventBus.unsubscribe('MISSION_STARTED', this.boundOnMissionStarted);
-        this.boundOnMissionStarted = null;
-    }
-
-    onMissionTimeChanged(data) {
-        let formattedData = this.formatTimeData(data);
-        this.timePanel.update(formattedData);
-    }
-
-    initUI(initialData) {
-        this.timePanel = new InstrumentPanel('bottom-right', UI_SETTINGS.prototypes.time);
-        this.timePanel.update(this.formatTimeData(initialData));
-        this.root.insertAdjacentElement('afterend', this.timePanel.element);
-        EventBus.subscribe('MISSION_TIME_CHANGED', this.boundOnMissionTimeChanged);
-    }
-
-    formatTimeData(data) {
-        let remaining = data.total - data.current;
-        let remainingSeconds = remaining / 1000;
-        let remainingString = '' + 
-            ((remainingSeconds >= 60) ? Math.floor(remainingSeconds / 60) + 'm' : '') + 
-            remainingSeconds % 60 + 's';
-        return {
-            remaining: remainingString
-        };
+    onMissionActiveChanged(isActive) {
+        if (isActive) {
+            this.destinationMarker = new mapboxgl.Marker()
+                .setLngLat([Store.getItem('missionDestinationX'), Store.getItem('missionDestinationY')])
+                .addTo(this.map);
+        } else {
+            if (this.destinationMarker) {
+                this.destinationMarker.remove();
+                this.destinationMarker = null;
+            }
+        }
     }
 
     moveTo(x, y) {
@@ -108,12 +90,6 @@ export default class Scene {
         this.animationPlayer.rotateMarkerTo(degree);
     }
 
-    adMarkerToMap(lnglat) {
-        new mapboxgl.Marker()
-            .setLngLat(lnglat)
-            .addTo(this.map);
-    }
-
     isOnWater(lat, lon) {
         let viewportWidth = this.map._container.offsetWidth;
         let viewportHeight = this.map._container.offsetHeight;
@@ -143,6 +119,6 @@ export default class Scene {
         this.movementAnimation.destroy();
         this.zoomAnimation.destroy();
         this.timePanel.destroy();
-        EventBus.unsubscribe('MISSION_TIME_CHANGED', this.boundOnMissionTimeChanged);
+        Store.unsubscribe('missionIsActive', this.boundOnMissionActiveChanged);
     }
 }

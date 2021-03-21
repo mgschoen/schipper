@@ -1,5 +1,5 @@
 import AbstractLoop from './_AbstractLoop';
-import Store from '../Store';
+import Store from '../store';
 import { translateWithBearing } from '../Helpers';
 
 export default class PanLoop extends AbstractLoop {

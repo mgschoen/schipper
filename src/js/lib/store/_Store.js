@@ -1,33 +1,40 @@
-const FIELDS = {
-    // map state
-    mapX: 'number',
-    mapY: 'number',
-    mapZoom: 'number',
+// const FIELD_DEFINITION = {
+//     // map state
+//     mapX: 'number',
+//     mapY: 'number',
+//     mapZoom: 'number',
 
-    // player state
-    playerRotation: 'number',
+//     // player state
+//     playerRotation: 'number',
 
-    // mission state
-    missionIsActive: 'boolean',
-    missionDestinationX: 'number',
-    missionDestinationY: 'number',
-    missionTimeTotal: 'number',
-    missionTimeCurrent: 'number',
-    missionState: ['pending', 'active', 'success', 'expired'],
+//     // mission state
+//     missionIsActive: 'boolean',
+//     missionDestinationX: 'number',
+//     missionDestinationY: 'number',
+//     missionTimeTotal: 'number',
+//     missionTimeCurrent: 'number',
+//     missionState: ['pending', 'active', 'success', 'expired'],
 
-    // input
-    activeKeys: 'object',
-}
+//     // input
+//     activeKeys: 'object',
+// }
+
+// const INITIAL_STATE = {
+//     missionIsActive: false,
+// }
+
+import FIELD_DEFINITION from './_fieldDefinition';
+import INITIAL_STATE from './_initialState';
 
 const privateData = {};
 
 const Store = {
     setItem(name, value) {
-        if (!FIELDS[name]) {
+        if (!FIELD_DEFINITION[name]) {
             throw new Error(`Cannot set unknown item "${name}"`);
         }
         
-        const typeDefinition = FIELDS[name];
+        const typeDefinition = FIELD_DEFINITION[name];
         let isTypeCheckPassed = false;
         if (Array.isArray(typeDefinition)) {
             isTypeCheckPassed = typeDefinition.indexOf(value) >= 0;
@@ -54,7 +61,7 @@ const Store = {
     },
 
     getItem(name) {
-        if (!FIELDS[name]) {
+        if (!FIELD_DEFINITION[name]) {
             throw new Error(`Cannot get unknown item "${name}"`);
         }
         if (!privateData[name]) {
@@ -64,7 +71,7 @@ const Store = {
     },
 
     subscribe(name, callback) {
-        if (!FIELDS[name]) {
+        if (!FIELD_DEFINITION[name]) {
             throw new Error(`Cannot subscribe to unknown item "${name}"`);
         }
         if (!privateData[name]) {
@@ -77,7 +84,7 @@ const Store = {
     },
 
     unsubscribe(name, callback) {
-        if (!FIELDS[name]) {
+        if (!FIELD_DEFINITION[name]) {
             throw new Error(`Cannot unsubscribe from unknown item "${name}"`);
         }
         if (privateData[name]) {
@@ -88,4 +95,14 @@ const Store = {
 }
 
 Object.freeze(Store);
+
+Object.keys(INITIAL_STATE).forEach((initialStateKey) => {
+    const initialStateValue = INITIAL_STATE[initialStateKey];
+    try {
+        Store.setItem(initialStateKey, initialStateValue);
+    } catch (error) {
+        console.warn(`Failed to set initial state property ${initialStateKey}: ${error.message}`);
+    }
+});
+
 export default Store;

@@ -26,9 +26,11 @@ export default class ComponentLoader {
                 activeComponentsIds.push(existingComponentId);
             } else {
                 const componentClass = this.componentClasses[componentName];
-                const newInstance = new componentClass(root);
-                this.components[`${componentName}-${newInstance.id}`] = newInstance;
-                activeComponentsIds.push(newInstance.id);
+                if (componentClass) {
+                    const newInstance = new componentClass(root);
+                    this.components[`${componentName}-${newInstance.id}`] = newInstance;
+                    activeComponentsIds.push(newInstance.id);
+                }
             }
         });
         Object.keys(this.components).forEach((instanceKey) => {

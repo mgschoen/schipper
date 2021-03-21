@@ -2,7 +2,7 @@ import Scene from './Scene';
 import InputObserver from './InputObserver';
 import MainLoop from './loop';
 import Mission from './Mission';
-import Store from './Store';
+import Store from './store';
 import createComponentLoader from './ui-components';
 
 export default class Schipper {
@@ -24,7 +24,7 @@ export default class Schipper {
     }
 
     onMissionTimeChanged(data) {
-        console.log(data);
+        // console.log(data);
     }
 
     onMissionExpired() {
@@ -33,10 +33,11 @@ export default class Schipper {
 
     startMission() {
         const destination = [10.0066302, 53.5761585];
-        this.activeMission = new Mission(destination, 30000);
+        this.activeMission = new Mission(destination, 30000, {
+            shortDescription: 'Hole das Holz für die Kirche aus dem Sachsenwald'
+        });
         this.activeMission.on('success', () => this.onMissionSuccess());
         this.activeMission.on('expired', () => this.onMissionExpired());
         this.activeMission.on('tick', (data) => this.onMissionTimeChanged(data));
-        this.scene.adMarkerToMap(destination);
     }
 }

@@ -1,5 +1,5 @@
 import EventBus from './EventBus';
-import Store from './Store';
+import Store, { useStore } from './store';
 
 import {
     getTransformStyles,
@@ -45,9 +45,10 @@ export default class AnimationPlayer {
         this._zoomDuration = null;
         this._markerRotationDuration = null;
 
-        this.boundOnPositionChanged = () => this.onPositionChanged();
-        Store.subscribe('mapX', this.boundOnPositionChanged);
-        Store.subscribe('mapY', this.boundOnPositionChanged);
+        this.positionSubscription = useStore([
+            'mapX',
+            'mapY'
+        ], this, () => this.onPositionChanged());
     }
 
     onPositionChanged() {
@@ -234,7 +235,6 @@ export default class AnimationPlayer {
     }
 
     destroy() {
-        Store.unsubscribe('mapX', this.boundOnPositionChanged);
-        Store.unsubscribe('mapY', this.boundOnPositionChanged);
+        this.positionSubscription.destroy();
     }
 }
