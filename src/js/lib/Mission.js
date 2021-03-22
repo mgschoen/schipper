@@ -19,7 +19,7 @@ export default class Mission {
         this.positionSubscription = useStore([
             'mapX',
             'mapY'
-        ], this, () => this.onPositionChanged());
+        ], () => this.onPositionChanged());
         Store.setItem('missionDestinationX', this.destination[0]);
         Store.setItem('missionDestinationY', this.destination[1]);
         Store.setItem('missionTimeTotal', timeInMs);
@@ -97,7 +97,7 @@ export default class Mission {
     destroy() {
         window.clearInterval(this.timeInterval);
         this.timeInterval = null;
-        this.positionSubscription.destroy();
+        this.positionSubscription.cancel();
         this.successCallbacks = [];
         this.expiredCallbacks = [];
         this.tickCallbacks = [];

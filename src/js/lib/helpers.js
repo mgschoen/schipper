@@ -48,25 +48,3 @@ export function setTransformStyles (element, styleObject) {
     let serializedStyles = serializeTransformStyles(styles);
     element.style.transform = serializedStyles;
 }
-
-export function useStore(propertyNames, instance, optionalUpdateHandler) {
-    const storeMediator = {
-        state: {},
-        subscribers: {},
-        destroy: () => {
-
-        }
-    };
-    propertyNames.forEach((propertyName) => {
-        storeMediator.state[propertyName] = Store.getItem(propertyName);
-        storeMediator.subscribers[propertyName] = (value) => {
-            state[propertyName] = value;
-            if (optionalUpdateHandler) {
-                optionalUpdateHandler(state);
-            } else {
-                instance.update(state);
-            }
-        }
-        Store.subscribe(propertyName, subscriber);
-    })
-}

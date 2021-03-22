@@ -12,7 +12,7 @@ export default class MissionDashboard extends AbstractComponent {
             'missionTimeTotal',
             'missionTimeCurrent',
             'missionDescription'
-        ], this, (state) => this.onStoreChanged(state));
+        ], (state) => this.onStoreChanged(state));
     }
 
     onStoreChanged(state) {
@@ -58,6 +58,6 @@ export default class MissionDashboard extends AbstractComponent {
 
     destroy() {
         super.destroy();
-        this.storeSubscription.destroy();
+        this.storeSubscription.cancel();
     }
 }

@@ -1,26 +1,28 @@
 import Store from './_Store';
 
-export default class Intermediary {
-    constructor(propertyNames, instance, optionalUpdateHandler) {
+export default class BulkSubscription {
+    constructor(propertyNames, updateHandler) {
+        if (!Array.isArray(propertyNames)) {
+            throw new Error('`propertyNames must be an array of store properties`');
+        }
+        if (typeof updateHandler !== 'function') {
+            throw new Error('missing callback `updateHandler` (invoked when store properties change)');
+        }
+
         this.state = {};
         this.subscribers = {};
-        this.updateHandler = optionalUpdateHandler;
-        this.instance = instance;
+        this.updateHandler = updateHandler;
 
         propertyNames.forEach((propertyName) => {
             this.subscribers[propertyName] = (value) => {
                 this.state[propertyName] = value;
-                if (this.updateHandler) {
-                    this.updateHandler({...this.state});
-                } else {
-                    this.instance.update({...this.state});
-                }
+                this.updateHandler({...this.state});
             };
             Store.subscribe(propertyName, this.subscribers[propertyName]);
         });
     }
 
-    destroy() {
+    cancel() {
         Object.keys(this.subscribers).forEach((propertyName) => {
             Store.unsubscribe(propertyName, this.subscribers[propertyName]);
         });

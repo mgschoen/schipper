@@ -48,7 +48,7 @@ export default class AnimationPlayer {
         this.positionSubscription = useStore([
             'mapX',
             'mapY'
-        ], this, () => this.onPositionChanged());
+        ], () => this.onPositionChanged());
     }
 
     onPositionChanged() {
@@ -235,6 +235,6 @@ export default class AnimationPlayer {
     }
 
     destroy() {
-        this.positionSubscription.destroy();
+        this.positionSubscription.cancel();
     }
 }

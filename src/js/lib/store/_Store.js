@@ -1,30 +1,4 @@
-// const FIELD_DEFINITION = {
-//     // map state
-//     mapX: 'number',
-//     mapY: 'number',
-//     mapZoom: 'number',
-
-//     // player state
-//     playerRotation: 'number',
-
-//     // mission state
-//     missionIsActive: 'boolean',
-//     missionDestinationX: 'number',
-//     missionDestinationY: 'number',
-//     missionTimeTotal: 'number',
-//     missionTimeCurrent: 'number',
-//     missionState: ['pending', 'active', 'success', 'expired'],
-
-//     // input
-//     activeKeys: 'object',
-// }
-
-// const INITIAL_STATE = {
-//     missionIsActive: false,
-// }
-
-import FIELD_DEFINITION from './_fieldDefinition';
-import INITIAL_STATE from './_initialState';
+import { FIELD_DEFINITION, INITIAL_STATE } from './_config';
 
 const privateData = {};
 

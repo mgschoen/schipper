@@ -1,4 +1,4 @@
-export default {
+export const FIELD_DEFINITION = {
     // map state
     mapX: 'number',
     mapY: 'number',
@@ -19,3 +19,10 @@ export default {
     // input
     activeKeys: 'object',
 }
+
+export const INITIAL_STATE = {
+    missionIsActive: false,
+    missionTimeTotal: 0,
+    missionTimeCurrent: 0,
+    missionDescription: '',
+};

@@ -1,8 +1,8 @@
 import Store from './_Store';
-import Intermediary from './_Intermediary';
+import BulkSubscription from './_BulkSubscription';
 
 export default Store;
 
-export function useStore(propertyNames, instance, optionalUpdateHandler) {
-    return new Intermediary(propertyNames, instance, optionalUpdateHandler);
+export function useStore(propertyNames, updateHandler) {
+    return new BulkSubscription(propertyNames, updateHandler);
 }
