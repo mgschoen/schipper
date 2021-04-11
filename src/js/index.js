@@ -1,5 +1,9 @@
 import Schipper from './lib/Schipper';
+import config from './content';
 
-const game = new Schipper('canvas', [10.01303, 53.57882]);
+const { startPosition, missions } = config;
+const game = new Schipper('canvas', startPosition, {
+    missions
+});
 
 window.schipper = game;
