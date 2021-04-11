@@ -13,8 +13,6 @@ export default class Mission {
         this.expiredCallbacks = [];
         this.tickCallbacks = [];
 
-        this.boundOnPositionChanged = () => this.onPositionChanged();
-
         this.timeInterval = window.setInterval(() => this.intervalTick(), this.timeIntervalLength);
         this.positionSubscription = useStore([
             'mapX',
@@ -41,7 +39,6 @@ export default class Mission {
 
         if (timeCurrentAfter >= timeTotal) {
             this.onExpired();
-            this.destroy();
         }
     }
 
@@ -50,16 +47,17 @@ export default class Mission {
         let distanceToDestination = distance(this.destination, position);
         if (distanceToDestination < this.destinationTolerance) {
             this.onSuccess();
-            this.destroy();
         }
     }
 
     onSuccess() {
         this.successCallbacks.forEach(callback => callback());
+        this.destroy();
     }
 
     onExpired() {
         this.expiredCallbacks.forEach(callback => callback());
+        this.destroy();
     }
 
     on(eventName, callback) {

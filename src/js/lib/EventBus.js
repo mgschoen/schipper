@@ -1,5 +1,8 @@
 const _subscriptions = {
-    VIEW_LOADED: []
+    MISSION_NO_NEXT_MISSION: [],
+    MISSION_SUCCESS: [],
+    MISSION_EXPIRED: [],
+    VIEW_LOADED: [],
 }
 
 const EventBus = {

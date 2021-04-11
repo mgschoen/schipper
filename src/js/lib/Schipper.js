@@ -1,43 +1,21 @@
 import Scene from './Scene';
 import InputObserver from './InputObserver';
 import MainLoop from './loop';
-import Mission from './Mission';
 import Store from './store';
+import MissionController from './MissionController';
 import createComponentLoader from './ui-components';
 
 export default class Schipper {
-    constructor(root, position) {
+    constructor(root, position, options) {
         Store.setItem('mapX', position[0]);
         Store.setItem('mapY', position[1]);
 
+        this.components = createComponentLoader();
         this.inputObserver = new InputObserver();
         this.scene = new Scene(root);
         this.mainLoop = new MainLoop(this.scene);
-        this.components = createComponentLoader();
-        this.activeMission = null;
+        this.missionController = new MissionController(options.missions || []);
 
         this.mainLoop.start();
-    }
-
-    onMissionSuccess() {
-        console.log('Success!');
-    }
-
-    onMissionTimeChanged(data) {
-        // console.log(data);
-    }
-
-    onMissionExpired() {
-        console.log('Oh noes, your time is up!');
-    }
-
-    startMission() {
-        const destination = [10.0066302, 53.5761585];
-        this.activeMission = new Mission(destination, 30000, {
-            shortDescription: 'Hole das Holz für die Kirche aus dem Sachsenwald'
-        });
-        this.activeMission.on('success', () => this.onMissionSuccess());
-        this.activeMission.on('expired', () => this.onMissionExpired());
-        this.activeMission.on('tick', (data) => this.onMissionTimeChanged(data));
     }
 }

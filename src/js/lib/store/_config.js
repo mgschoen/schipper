@@ -9,6 +9,8 @@ export const FIELD_DEFINITION = {
 
     // mission state
     missionIsActive: 'boolean',
+    missionIndexCurrent: 'number',
+    missionCountTotal: 'number',
     missionDestinationX: 'number',
     missionDestinationY: 'number',
     missionTimeTotal: 'number',
