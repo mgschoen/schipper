@@ -8,7 +8,7 @@ export const FIELD_DEFINITION = {
     playerRotation: 'number',
 
     // mission state
-    missionIsActive: 'boolean',
+    missionLifecycle: ['inactive', 'idle', 'active', 'paused'],
     missionIndexCurrent: 'number',
     missionCountTotal: 'number',
     missionDestinationX: 'number',
@@ -16,15 +16,16 @@ export const FIELD_DEFINITION = {
     missionTimeTotal: 'number',
     missionTimeCurrent: 'number',
     missionDescription: 'string',
-    missionState: ['pending', 'active', 'success', 'expired'],
 
     // input
     activeKeys: 'object',
 }
 
 export const INITIAL_STATE = {
-    missionIsActive: false,
+    missionLifecycle: 'inactive',
     missionTimeTotal: 0,
     missionTimeCurrent: 0,
     missionDescription: '',
+    missionIndexCurrent: 0,
+    missionCountTotal: 0,
 };

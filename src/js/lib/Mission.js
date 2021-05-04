@@ -23,7 +23,6 @@ export default class Mission {
         Store.setItem('missionTimeTotal', timeInMs);
         Store.setItem('missionTimeCurrent', 0);
         Store.setItem('missionDescription', this.shortDescription);
-        Store.setItem('missionIsActive', true);
     }
 
     intervalTick() {
@@ -99,6 +98,5 @@ export default class Mission {
         this.successCallbacks = [];
         this.expiredCallbacks = [];
         this.tickCallbacks = [];
-        Store.setItem('missionIsActive', false);
     }
 }

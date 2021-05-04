@@ -1,5 +1,5 @@
 import Mission from './Mission';
-import Store from './Store';
+import Store from './store';
 import EventBus from './EventBus';
 
 export default class MissionController {
@@ -22,6 +22,7 @@ export default class MissionController {
         this.activeMission = null;
 
         Store.setItem('missionCountTotal', this.missions.length);
+        Store.setItem('missionLifecycle', 'inactive');
 
         this.boundOnViewLoaded = () => {
             EventBus.unsubscribe('VIEW_LOADED', this.boundOnViewLoaded);
@@ -40,11 +41,13 @@ export default class MissionController {
         this.activeMissionConfig = nextMissionConfig;
         this.activeMission = nextMission;
         Store.setItem('missionIndexCurrent', index);
+        Store.setItem('missionLifecycle', 'active');
     }
 
     pause() {
         if (this.activeMission && typeof this.activeMission.pause === 'function') {
             this.activeMission.pause();
+            Store.setItem('missionLifecycle', 'paused');
         }
     }
 
@@ -52,6 +55,7 @@ export default class MissionController {
         EventBus.publish('MISSION_SUCCESS');
         this.activeMissionConfig = null;
         this.activeMission = null;
+        Store.setItem('missionLifecycle', 'inactive');
         
         const nextMissionIndex = Store.getItem('missionIndexCurrent') !== null
             ? Store.getItem('missionIndexCurrent') + 1
@@ -71,6 +75,7 @@ export default class MissionController {
         EventBus.publish('MISSION_EXPIRED');
         this.activeMissionConfig = null;
         this.activeMission = null;
+        Store.setItem('missionLifecycle', 'inactive');
 
         window.setTimeout(() => {
             this.initMission(Store.getItem('missionIndexCurrent'));

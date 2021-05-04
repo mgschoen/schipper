@@ -26,7 +26,7 @@ export default class Scene {
         this.animationPlayer = null;
         this.loaded = false;
 
-        this.boundOnMissionActiveChanged = (data) => this.onMissionActiveChanged(data);
+        this.boundOnMissionLifecycleChanged = (data) => this.onMissionLifecycleChanged(data);
 
         this.map.on('load', () => this.onMapLoaded());
     }
@@ -38,23 +38,22 @@ export default class Scene {
         this.marker = marker;
 
         this.animationPlayer = new AnimationPlayer(this.map, this.marker);
-        Store.subscribe('missionIsActive', this.boundOnMissionActiveChanged);
+        Store.subscribe('missionLifecycle', this.boundOnMissionLifecycleChanged);
 
         // done loading
         this.loaded = true;
         EventBus.publish('VIEW_LOADED', this);
     }
 
-    onMissionActiveChanged(isActive) {
-        if (isActive) {
+    onMissionLifecycleChanged(missionLifecycle) {
+        const isActive = missionLifecycle !== 'inactive';
+        if (isActive && !this.destinationMarker) {
             this.destinationMarker = new mapboxgl.Marker()
                 .setLngLat([Store.getItem('missionDestinationX'), Store.getItem('missionDestinationY')])
                 .addTo(this.map);
-        } else {
-            if (this.destinationMarker) {
-                this.destinationMarker.remove();
-                this.destinationMarker = null;
-            }
+        } else if (!isActive && this.destinationMarker) {
+            this.destinationMarker.remove();
+            this.destinationMarker = null;
         }
     }
 
@@ -119,6 +118,6 @@ export default class Scene {
         this.movementAnimation.destroy();
         this.zoomAnimation.destroy();
         this.timePanel.destroy();
-        Store.unsubscribe('missionIsActive', this.boundOnMissionActiveChanged);
+        Store.unsubscribe('missionLifecycle', this.boundOnMissionLifecycleChanged);
     }
 }

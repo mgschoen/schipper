@@ -8,7 +8,7 @@ export default class MissionDashboard extends AbstractComponent {
         this._visible = false;
 
         this.storeSubscription = useStore([
-            'missionIsActive',
+            'missionLifecycle',
             'missionTimeTotal',
             'missionTimeCurrent',
             'missionDescription'
@@ -16,7 +16,7 @@ export default class MissionDashboard extends AbstractComponent {
     }
 
     onStoreChanged(state) {
-        this.visible = state.missionIsActive;
+        this.visible = ['active', 'paused'].includes(state.missionLifecycle);
         if (typeof state.missionTimeTotal === 'number' && typeof state.missionTimeCurrent === 'number') {
             this.elements.time.textContent = this.formatTimeData(state.missionTimeTotal, state.missionTimeCurrent);
         }
