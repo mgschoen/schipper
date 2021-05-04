@@ -14,6 +14,7 @@ export default class BulkSubscription {
         this.updateHandler = updateHandler;
 
         propertyNames.forEach((propertyName) => {
+            this.state[propertyName] = Store.getItem(propertyName);
             this.subscribers[propertyName] = (value) => {
                 this.state[propertyName] = value;
                 this.updateHandler({...this.state});
