@@ -16,8 +16,6 @@ export default class MissionCounter extends AbstractComponent {
 
     onStoreChanged(state) {
         this.visible = state.missionLifecycle !== 'inactive';
-        console.log(state);
-        console.log(this.elements);
         if (typeof state.missionIndexCurrent === 'number') {
             this.elements.current.textContent = state.missionIndexCurrent + 1;
         }
